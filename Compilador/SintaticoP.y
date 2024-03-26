@@ -8,11 +8,12 @@
 using namespace std;
 
 int var_temp_qnt;
-
+string Tipagens 
 struct atributos
 {
 	string label;
 	string traducao;
+	string tipo;
 };
 
 int yylex(void);
@@ -81,17 +82,26 @@ E 			: E '+' E
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
 					" = " + $1.label + " - " + $3.label + ";\n";
 			}
+			| '(' E '&&' E ')'
+			{
+				$$.label = gentempcode();
+				if($2.traducao == true && $1.traducao == true){
+
+				}
+			}
 			| TK_ID '=' E
 			{
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $1.label + " = " + $3.label + ";\n";
 			}
 			| TK_NUM
 			{
+				$$.tipo = "int";
 				$$.label = gentempcode();
 				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
 			}
 			| TK_ID
 			{
+				$$.tipo = "Default";
 				$$.label = gentempcode();
 				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
 			}

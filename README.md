@@ -1,5 +1,5 @@
-# Compilador Foca
-O Foca é o inicio do desenvolvimento de um compilador que é demonstrado na disciplina Compiladores.
+# Trabalho da classe de Compilador
+Desenvolvimento de um compilador para a avaliação da matéria de compiladores
 
 ## Instalação
 

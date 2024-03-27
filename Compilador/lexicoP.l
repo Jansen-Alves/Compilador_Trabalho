@@ -27,15 +27,13 @@ VARI {LETRA}({LETRA}|{NUM})*
 
 [+\-*/!]		{ return *yytext; }
 
-"&&"        {return '&&';}
-
-"||"        {return '||';}
-
 
 "="		    { return '='; }
 
 
 {NUM}		{ yylval.label = yytext; return TK_NUM; }
+
+{REAL}      { yylval.label = yytext; return TK_FLOAT;}
 
 {VARI}		{ yylval.label = yytext; return TK_ID; }
 

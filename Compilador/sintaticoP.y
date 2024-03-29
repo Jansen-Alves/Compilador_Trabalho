@@ -28,7 +28,8 @@ void yyerror(string);
 string gentempcode();
 void inserirSimbolos(string nome, string tipo);
 bool verificarsimbolos(string nome);
-tabelaSimbolos buscarSimbolos(string nome);
+void checarlista();
+string buscarSimbolos(string nome);
 
 tabelaSimbolos Listageral[10];
 %}
@@ -57,6 +58,7 @@ S 			: TK_TIPO_INT TK_MAIN '(' ')' BLOCO
 							"\n}";
 
 				cout << codigo << endl;
+				checarlista();
 			}
 			;
 
@@ -80,9 +82,9 @@ COMANDO 	: E ';'
 			{
 				$$ = $1;
 			}
-			| TK_TIPO_INT TK_ID";"
+			| TK_TIPO_INT TK_ID ';'
 			{
-				inserirSimbolos($1.label, $2.label);
+				inserirSimbolos($2.label, "int");
 			}
 			;
 
@@ -105,13 +107,17 @@ E 			: E '+' E
 			}
 			| TK_NUM
 			{
-				$$.tipo = "int";
 				$$.label = gentempcode();
 				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
 			}
 			| TK_ID
 			{
-				$$.label = gentempcode();
+				string flag;
+				flag = buscarSimbolos($1.label);
+				if(flag.compare(" ") == 0){
+					yyerror("Variavel não declarada");
+				}
+				$$.label = flag;
 				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
 			}
 			;
@@ -127,31 +133,53 @@ string gentempcode()
 	var_temp_qnt++;
 	return "t" + to_string(var_temp_qnt);
 }
-tabelaSimbolos buscarSimbolos(string nome){
+void checarlista(){
+	int i;
 	tabelaSimbolos x;
-	x.nome = "";
-	x.tipo = "";
-	x.endereco = "";
-	int i, v;
+
+	for(i=0; i<qtd_simb; i++){
+		x = Listageral[i];
+		cout<< "\t nome: " << x.nome << " tipo: " << x.tipo << ' ' << x.endereco << endl;
+	}
+}
+string buscarSimbolos(string nome){
+	string x;
+	x = "";
+	int i;
 	for(i = 0; i< qtd_simb; i++){
 		if(nome.compare(Listageral[i].nome) == 0){
-			x.nome = Listageral[i].nome;
-			x.tipo = Listageral[i].tipo;
-			x.endereco = Listageral[i].endereco;	
+			printf("Achei");
+			x = Listageral[i].endereco;	
+			return x;
 		}
 	}
 	return x;
 }
 bool verificarsimbolos(string nome){
+	tabelaSimbolos x; 
+
+	x.endereco = buscarSimbolos(nome);
+	if(x.endereco.compare("") == 0){
+		return false;
+	}
+	return true;
 
 }
 void inserirSimbolos(string nome, string tipo){
 	tabelaSimbolos var; 
+	bool v;
+
+	v = verificarsimbolos(nome);
+	cout << v << endl;
+	if(v == true){
+		checarlista();
+		yyerror("Nome de variavel já declarada");
+	}
 	var.nome = nome;
 	var.tipo = tipo;
 	var.endereco = gentempcode();
-
-	printf("aqui");
+	
+	cout << var.nome << ' ' << var.tipo << ' ' << var.endereco <<endl;
 	Listageral[qtd_simb] = var;
 	qtd_simb++;
 

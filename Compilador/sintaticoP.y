@@ -29,11 +29,12 @@ struct atributos
 int yylex(void);
 void yyerror(string);
 string gentempcode();
-void inserirSimbolos(string nome, string tipo);
+tabelaSimbolos inserirSimbolos(string nome, string tipo);
+void alterarSimbolos(tabelaSimbolos x);
 bool verificarsimbolos(string nome);
 void checarlista();
 void tipagem();
-string buscarSimbolos(string nome);
+tabelaSimbolos buscarSimbolos(string nome);
 
 tabelaSimbolos Listageral[10];
 %}
@@ -44,7 +45,7 @@ tabelaSimbolos Listageral[10];
 
 %start S
 
-%left '+'
+%left '+' '-'
 
 %%
 
@@ -89,33 +90,28 @@ COMANDO 	: E ';'
 			{
 				inserirSimbolos($2.label, "int");
 			}
+			| TK_TIPO_FLOAT TK_ID ';'
+			{
+				inserirSimbolos($2.label, "float");
+			}
 			;
 
 E 			: E '+' E
 			{
+				int r1;
+				float r2;
 				if($1.classe.compare("Number") == 0 and $3.classe.compare("Number") == 0){
 					if($1.tipo.compare($3.tipo) != 0){
 						$1.tipo = "float";
 						$3.tipo = "float";
-					}
-				}
-				else{
-					if($1.tipo.compare($3.tipo) != 0){
-						yyerror("Erro na concatenação tipos diferentes");
-					}
-				}
-				$$.label = gentempcode();
-				$$.tipo = $1.tipo;
-				$$.classe = $1.classe;
-				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " + " + $3.label + ";\n";
-			}
-			| E '-' E
-			{
-				if($1.classe.compare("Number") == 0 and $3.classe.compare("Number") == 0){
-					if($1.tipo.compare($3.tipo) != 0){
-						$1.tipo = "float";
-						$3.tipo = "float";
+						r2 = stof($1.val) + stof($3.val);
+						$$.val = to_string(r2);
+					}else if($1.tipo.compare("int")){
+						r1 = stoi($1.val) + stoi($3.val);
+						$$.val = to_string(r1);
+					}else{
+						r2 = stof($1.val) + stof($3.val);
+						$$.val = to_string(r2);
 					}
 				}
 				else{
@@ -127,21 +123,90 @@ E 			: E '+' E
 				$$.tipo = $1.tipo;
 				$$.classe = $1.classe;
 				
+				
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " - " + $3.label + ";\n";
+						" = " + $1.label + " + " + $3.label +"("+ $$.val + ")" + ";\n";
 			}
-			
+			| E '-' E
+			{
+				int r1;
+				float r2;
+				if($1.classe.compare("Number") == 0 and $3.classe.compare("Number") == 0){
+					if($1.tipo.compare($3.tipo) != 0){
+						$1.tipo = "float";
+						$3.tipo = "float";
+						r2 = stof($1.val) - stof($3.val);
+						$$.val = to_string(r2);
+					}else if($1.tipo.compare("int")){
+						r1 = stoi($1.val) - stoi($3.val);
+						$$.val = to_string(r1);
+					}else{
+						r2 = stof($1.val) - stof($3.val);
+						$$.val = to_string(r2);
+					}
+				}
+				else{
+					if($1.tipo.compare($3.tipo) != 0){
+						yyerror("Erro na concatenação tipos diferentes");
+					}
+				}
+				$$.label = gentempcode();
+				$$.tipo = $1.tipo;
+				$$.classe = $1.classe;
+				
+				
+				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+						" = " + $1.label + " - " + $3.label +"("+ $$.val + ")" + ";\n";
+			}
+			| E '*' E
+			{
+				int r1; 
+				double r2;
+				if($1.classe.compare("Number") == 0 and $3.classe.compare("Number") == 0 ){
+					if($1.tipo.compare($3.tipo) != 0){
+						$1.tipo = "float";
+						$3.tipo = "float";
+						r2 = stof($1.val) * stof($3.val);
+						$$.val = to_string(r2);
+					}else if($1.tipo.compare("int")){
+						r1 = stoi($1.val) * stoi($3.val);
+						$$.val = to_string(r1);
+					}else{
+						r2 = stof($1.val) * stof($3.val);
+						$$.val = to_string(r2);
+					}
+				}else{
+					if($1.tipo.compare($3.tipo) != 0){
+						yyerror("Erro na concatenação tipos diferentes");
+					}
+				}
+				$$.label = gentempcode();
+				$$.tipo = $1.tipo;
+				$$.classe = $1.classe;
+				
+				
+				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+						" = " + $1.label + " * " + $3.label +"("+ $$.val + ")" + ";\n";
+			}
 			| TK_ID '=' E
 			{
-				string flag;
+				tabelaSimbolos flag;
 				flag = buscarSimbolos($1.label);
-				if(flag.compare("") == 0){
-					inserirSimbolos($1.label, $3.tipo);
-				}else if($1.tipo.compare($3.tipo) != 0){
+				cout << $1.label << " primeira verificação"<< endl;
+				if(flag.endereco.compare("") == 0){
+					flag = inserirSimbolos($1.label, $3.tipo);
+				}else if(flag.tipo.compare($3.tipo) != 0){
+					checarlista();
+					cout << $1.tipo << " comp" << $3.tipo << endl;
 					yyerror("Atribuição incorreta, tipo de variavel incompativel");
+					
 				}
+				$$.label = $1.label;
 				$$.tipo = $3.tipo;
 				$$.val = $3.val;
+				flag.val = $$.val;
+				alterarSimbolos(flag);
+				cout << flag.nome << endl;
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $1.label + " = " + $3.label + ";\n";
 			}
 			| TK_NUM
@@ -149,7 +214,7 @@ E 			: E '+' E
 				$$.label = gentempcode();
 				$$.tipo = "int";
 				$$.classe = "Number";
-				//$$.val = $1.label;
+				$$.val = $1.label;
 				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
 			}
 			| TK_REAL
@@ -157,18 +222,19 @@ E 			: E '+' E
 				$$.label = gentempcode();
 				$$.tipo = "float";
 				$$.classe = "Number";
-				//$$.val = $1.label;
+				$$.val = $1.label;
 				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
 			}
 			| TK_ID
 			{
-				string flag;
+				tabelaSimbolos flag;
 				flag = buscarSimbolos($1.label);
-				if(flag.compare(" ") == 0){
+				if(flag.endereco.compare("") == 0){
 					yyerror("Variavel não declarada");
 				}
-				$$.label = flag;
-				//$$.val = flag.val;
+				$$.label = flag.endereco;
+				$$.val = flag.val;
+				$$.tipo = flag.tipo;
 				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
 
 			}
@@ -200,33 +266,43 @@ void checarlista(){
 
 	for(i=0; i<qtd_simb; i++){
 		x = Listageral[i];
-		cout<< "\t nome: " << x.nome << " tipo: " << x.tipo << ' ' << x.endereco << endl;
+		cout<< "\t nome: " << x.nome << " "<< "val: "<< x.val << " " <<" tipo: " << x.tipo << '-' << x.endereco << endl;
 	}
 }
-string buscarSimbolos(string nome){
-	string x;
-	x = "";
+tabelaSimbolos buscarSimbolos(string nome){
+	tabelaSimbolos x;
+	x.nome = "";
+	x.tipo = "";
+	x.endereco = "";
 	int i;
 	for(i = 0; i< qtd_simb; i++){
 		if(nome.compare(Listageral[i].nome) == 0){
 			//printf("Achei");
-			x = Listageral[i].endereco;	
+			x = Listageral[i];	
 			return x;
 		}
 	}
 	return x;
 }
+void alterarSimbolos(tabelaSimbolos x){
+	int i;
+	for(i = 0; i< qtd_simb; i++){
+		if(x.nome.compare(Listageral[i].nome) == 0){
+			Listageral[i] = x;
+		}
+	}
+}
 bool verificarsimbolos(string nome){
 	tabelaSimbolos x; 
 
-	x.endereco = buscarSimbolos(nome);
+	x = buscarSimbolos(nome);
 	if(x.endereco.compare("") == 0){
 		return false;
 	}
 	return true;
 
 }
-void inserirSimbolos(string nome, string tipo){
+tabelaSimbolos inserirSimbolos(string nome, string tipo){
 	tabelaSimbolos var; 
 	bool v;
 
@@ -238,11 +314,14 @@ void inserirSimbolos(string nome, string tipo){
 	}
 	var.nome = nome;
 	var.tipo = tipo;
+	var.val = "";
 	var.endereco = gentempcode();
 	
 	cout << var.nome << ' ' << var.tipo << ' ' << var.endereco <<endl;
 	Listageral[qtd_simb] = var;
 	qtd_simb++;
+
+	return var;
 
 }
 int main(int argc, char* argv[])

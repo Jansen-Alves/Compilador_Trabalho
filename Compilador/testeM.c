@@ -17,6 +17,7 @@ void main(){
     }
     if(n>0){
         printf("Media = %d\n", total/n);
+        printf("valor = %f\n", 2*3.2);
         
     }
 }

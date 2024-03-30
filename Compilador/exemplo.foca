@@ -1,5 +1,8 @@
 int main()
 {
-	oi = 12 ;
+	int x;
+	int y;
+	x = 3;
+	y = 3 * 2.0;
 
 }

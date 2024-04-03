@@ -25,6 +25,28 @@ VARI {LETRA}({LETRA}|{NUM})*
 
 "float"     {return TK_TIPO_FLOAT;}
 
+"char"      {return TK_TIPO_CHAR;}
+
+"bool"      {return TK_TIPO_BOOL;}
+
+">="        {return TK_MAIOR_IGUAL;}
+
+"<="        {return TK_MENOR_IGUAL;}
+
+">"         {return TK_MAIOR;}
+
+"<"         {return TK_MENOR;}
+
+"=="        {return TK_IGUALDADE;}
+
+"&&"        {return TK_CONJUNCAO;}
+
+"||"        {return TK_DISNJUNCAO;}
+
+"TRUE"      {yylval.label = yytext; return TK_BOOL;}
+
+"FALSE"     {yylval.label = yytext; return TK_BOOL;}
+
 [(){}[\];,]	{ return *yytext; }
 
 [+\-*/!]		{ return *yytext; }
@@ -36,6 +58,8 @@ VARI {LETRA}({LETRA}|{NUM})*
 {NUM}		{ yylval.label = yytext; return TK_NUM; }
 
 {REAL}      { yylval.label = yytext; return TK_REAL;}
+
+{CHAR}      {yylval.label = yytext; return TK_CHAR;}
 
 {VARI}		{ yylval.label = yytext; return TK_ID; }
 

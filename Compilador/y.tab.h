@@ -57,12 +57,23 @@ extern int yydebug;
     TK_NUM = 258,                  /* TK_NUM  */
     TK_STR = 259,                  /* TK_STR  */
     TK_REAL = 260,                 /* TK_REAL  */
-    TK_MAIN = 261,                 /* TK_MAIN  */
-    TK_ID = 262,                   /* TK_ID  */
-    TK_TIPO_INT = 263,             /* TK_TIPO_INT  */
-    TK_TIPO_FLOAT = 264,           /* TK_TIPO_FLOAT  */
-    TK_FIM = 265,                  /* TK_FIM  */
-    TK_ERROR = 266                 /* TK_ERROR  */
+    TK_CHAR = 261,                 /* TK_CHAR  */
+    TK_BOOL = 262,                 /* TK_BOOL  */
+    TK_MAIN = 263,                 /* TK_MAIN  */
+    TK_ID = 264,                   /* TK_ID  */
+    TK_TIPO_INT = 265,             /* TK_TIPO_INT  */
+    TK_TIPO_FLOAT = 266,           /* TK_TIPO_FLOAT  */
+    TK_TIPO_CHAR = 267,            /* TK_TIPO_CHAR  */
+    TK_TIPO_BOOL = 268,            /* TK_TIPO_BOOL  */
+    TK_MAIOR_IGUAL = 269,          /* TK_MAIOR_IGUAL  */
+    TK_MENOR_IGUAL = 270,          /* TK_MENOR_IGUAL  */
+    TK_MAIOR = 271,                /* TK_MAIOR  */
+    TK_MENOR = 272,                /* TK_MENOR  */
+    TK_IGUALDADE = 273,            /* TK_IGUALDADE  */
+    TK_CONJUNCAO = 274,            /* TK_CONJUNCAO  */
+    TK_DISNJUNCAO = 275,           /* TK_DISNJUNCAO  */
+    TK_FIM = 276,                  /* TK_FIM  */
+    TK_ERROR = 277                 /* TK_ERROR  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -74,12 +85,23 @@ extern int yydebug;
 #define TK_NUM 258
 #define TK_STR 259
 #define TK_REAL 260
-#define TK_MAIN 261
-#define TK_ID 262
-#define TK_TIPO_INT 263
-#define TK_TIPO_FLOAT 264
-#define TK_FIM 265
-#define TK_ERROR 266
+#define TK_CHAR 261
+#define TK_BOOL 262
+#define TK_MAIN 263
+#define TK_ID 264
+#define TK_TIPO_INT 265
+#define TK_TIPO_FLOAT 266
+#define TK_TIPO_CHAR 267
+#define TK_TIPO_BOOL 268
+#define TK_MAIOR_IGUAL 269
+#define TK_MENOR_IGUAL 270
+#define TK_MAIOR 271
+#define TK_MENOR 272
+#define TK_IGUALDADE 273
+#define TK_CONJUNCAO 274
+#define TK_DISNJUNCAO 275
+#define TK_FIM 276
+#define TK_ERROR 277
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

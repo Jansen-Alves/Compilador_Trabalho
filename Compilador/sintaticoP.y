@@ -133,33 +133,79 @@ E 			: E '+' E
 			{
 				int r1;
 				float r2;
-				if($1.classe.compare("Number") == 0 and $3.classe.compare("Number") == 0){
-					if($1.tipo.compare($3.tipo) != 0){
+				if($1.tipo.compare($3.tipo) != 0 ){
+					atributos conv;
+					int x;
+					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
+						conv.label = gentempcode();
+						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n"; 
 						$1.tipo = "float";
-						$3.tipo = "float";
 						r2 = stof($1.val) + stof($3.val);
 						$$.val = to_string(r2);
-					}else if($1.tipo.compare("int") == 0){
+						x = 0;
+
+					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
+						conv.label = gentempcode();
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + $3.label + ";\n"; 
+						$3.tipo = "float";
+						r2= stof($1.val) + stof($3.val);
+						$$.val = to_string(r2);
+						x = 1;
+
+					}else if($1.tipo.compare("int") == 0 && $3.tipo.compare("char") == 0){
+						conv.label = gentempcode();
+						conv.traducao = "\t" + conv.label + "=" + "(int) " + $3.label + ";\n"; 
+						$3.tipo = "int";
 						r1 = stoi($1.val) + stoi($3.val);
 						$$.val = to_string(r1);
+						x = 1;
+
+					}else if($1.tipo.compare("char") == 0 && $3.tipo.compare("int") == 0){
+						conv.label = gentempcode();
+						conv.traducao = "\t" + conv.label + "=" + "(int) " + $1.label + ";\n"; 
+						$1.tipo = "int";
+						r1 = stoi($1.val) + stoi($3.val);
+						$$.val = to_string(r1);
+						x = 0;
+						
 					}else{
-						r2 = stof($1.val) + stof($3.val);
-						$$.val = to_string(r2);
+						yyerror("Tipos incompativeis para essa operação");
 					}
-				}
-				else if($1.classe.compare("Character") == 0 and $3.classe.compare("Character") == 0){
-					$$.val = $1.val + $3.val;
+					$$.label = gentempcode();
+					$$.tipo = $1.tipo;
+					$$.classe = $1.classe;
+					
+					
+					if(x == 0){
+					$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
+							" = " + conv.label + " + " + $3.label + ";\n";
+					}else{
+						$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
+							" = " + $1.label + " + " + conv.label + ";\n";
+					}
+
 				}
 				else{
-					yyerror("Tipos incompativeis para essa operação");
-				}
-				$$.label = gentempcode();
-				$$.tipo = $1.tipo;
-				$$.classe = $1.classe;
+					if($1.tipo.compare("int") == 0){
+						r2 = stoi($1.val) + stoi($3.val);
+						$$.val = to_string(r2);
+					}else if($1.tipo.compare("float") == 0){
+						r2 = stof($1.val) + stof($3.val);
+						$$.val = to_string(r2);
+					}else if($1.tipo.compare("bool") == 0){
+						$$.val = $1.val + $2.val;
+					}else{
+						yyerror("Tipos incompativeis para essa operação");
+					}
+					$$.label = gentempcode();
+					$$.tipo = $1.tipo;
+					$$.classe = $1.classe;
 				
 				
-				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+					$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
 						" = " + $1.label + " + " + $3.label + ";\n";
+				}
+				
 			}
 			| E '-' E
 			{

@@ -47,13 +47,22 @@ tabelaSimbolos Listageral[10];
 %token TK_NUM TK_STR TK_REAL TK_CHAR TK_BOOL
 %token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLOAT
 %token TK_TIPO_CHAR TK_TIPO_BOOL
-%token TK_MAIOR_IGUAL TK_MENOR_IGUAL TK_MAIOR TK_MENOR TK_IGUALDADE
+%token TK_MAIOR_IGUAL TK_MENOR_IGUAL TK_MAIOR TK_MENOR TK_IGUALDADE TK_DESIGUALDADE
 %token TK_CONJUNCAO TK_DISNJUNCAO
 %token TK_FIM TK_ERROR
 
 %start S
 
+%left TK_DISNJUNCAO
+%left TK_CONJUNCAO
+
+%left TK_IGUALDADE TK_DESIGUALDADE
+%left TK_MENOR TK_MENOR_IGUAL TK_MAIOR TK_MAIOR_IGUAL
+
 %left '+' '-'
+%left '*' '/'
+%left '^'
+
 
 %%
 
@@ -64,6 +73,9 @@ S 			: TK_TIPO_INT TK_MAIN '(' ')' BLOCO
 								"#include <iostream>\n"
 								"#include<string.h>\n"
 								"#include<stdio.h>\n"
+								"#define TRUE 1\n"
+								"#define FALSE 0\n"
+								"#define bool int\n"
 								"int main(void) {\n";	
 				for(i=0; i<qtd_simb; i++){
 					codigo += "\t" + Listageral[i].tipo +" "+ Listageral[i].nome + ";\n";
@@ -127,7 +139,7 @@ E 			: E '+' E
 						$3.tipo = "float";
 						r2 = stof($1.val) + stof($3.val);
 						$$.val = to_string(r2);
-					}else if($1.tipo.compare("int")){
+					}else if($1.tipo.compare("int") == 0){
 						r1 = stoi($1.val) + stoi($3.val);
 						$$.val = to_string(r1);
 					}else{
@@ -147,7 +159,7 @@ E 			: E '+' E
 				
 				
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " + " + $3.label +"("+ $$.val + ")" + ";\n";
+						" = " + $1.label + " + " + $3.label + ";\n";
 			}
 			| E '-' E
 			{
@@ -176,7 +188,7 @@ E 			: E '+' E
 				
 				
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " - " + $3.label +"("+ $$.val + ")" + ";\n";
+						" = " + $1.label + " - " + $3.label + ";\n";
 			}
 			| E '*' E
 			{
@@ -191,6 +203,7 @@ E 			: E '+' E
 					}else if($1.tipo.compare("int") == 0){
 						r1 = stoi($1.val) * stoi($3.val);
 						$$.val = to_string(r1);
+					
 					}else{
 						r2 = stof($1.val) * stof($3.val);
 						$$.val = to_string(r2);
@@ -200,13 +213,14 @@ E 			: E '+' E
 						yyerror("Erro na concatenação tipos diferentes");
 					}
 				}
+				
 				$$.label = gentempcode();
 				$$.tipo = $1.tipo;
 				$$.classe = $1.classe;
 				
 				
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " * " + $3.label +"("+ $$.val + ")" + ";\n";
+						" = " + $1.label + " * " + $3.label + ";\n";
 			}
 			| E '/' E
 			{
@@ -236,7 +250,7 @@ E 			: E '+' E
 				
 				
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " / " + $3.label +"("+ $$.val + ")" + ";\n";
+						" = " + $1.label + " / " + $3.label +";\n";
 			}
 			| E TK_MAIOR_IGUAL E
 			{
@@ -267,7 +281,7 @@ E 			: E '+' E
 				//cout << "valor da operação " << $$.val <<endl;
 
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " >= " + $3.label +"("+ $$.val + ")" + ";\n";
+						" = " + $1.label + " >= " + $3.label + ";\n";
 			}
 			| E TK_MENOR_IGUAL E
 			{
@@ -297,7 +311,7 @@ E 			: E '+' E
 				}
 				//cout << "valor da operação " << $$.val <<endl;
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " <= " + $3.label +"("+ $$.val + ")" + ";\n";
+						" = " + $1.label + " <= " + $3.label+ ";\n";
 			}
 			| E TK_MAIOR E
 			{
@@ -328,7 +342,7 @@ E 			: E '+' E
 				//cout << "valor da operação " << $$.val <<endl;
 
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " > " + $3.label +"("+ $$.val + ")" + ";\n";
+						" = " + $1.label + " > " + $3.label  + ";\n";
 			}
 			| E TK_MENOR E
 			{
@@ -359,7 +373,7 @@ E 			: E '+' E
 				//cout << "valor da operação " << $$.val <<endl;
 
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " < " + $3.label +"("+ $$.val + ")" + ";\n";
+						" = " + $1.label + " < " + $3.label + ";\n";
 			}
 			| E TK_IGUALDADE E
 			{
@@ -392,7 +406,40 @@ E 			: E '+' E
 				//cout << "valor da operação " << $$.val <<endl;
 
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " == " + $3.label +"("+ $$.val + ")" + ";\n";
+						" = " + $1.label + " == " + $3.label + ";\n";
+			}
+			| E TK_DESIGUALDADE E
+			{
+				bool x; 
+				if($1.classe.compare("Number") == 0 and $3.classe.compare("Number") == 0 ){
+					if($1.tipo.compare("int") == 0 && $3.tipo.compare("int") == 0){
+						x = stoi($1.val) != stoi($3.val);
+					}else if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
+						x = stoi($1.val) != stof($3.val);
+					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
+						x = stof($1.val) != stoi($3.val);
+					}
+					else{
+						x = stof($1.val) != stof($3.val);
+					}
+
+				}else if($1.classe.compare("Character") == 0 && $3.classe.compare("Character") == 0){
+					x = $1.val != $3.val;
+				}
+
+				if(x){
+						$$.val = "TRUE";
+					}else{
+						$$.val = "FALSE";
+					}
+					$$.label = gentempcode();
+					$$.tipo = "bool";
+					$$.classe = "Boolean";
+
+				//cout << "valor da operação " << $$.val <<endl;
+
+				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+						" = " + $1.label + " != " + $3.label + ";\n";
 			}
 			| E TK_CONJUNCAO E
 			{
@@ -412,7 +459,7 @@ E 			: E '+' E
 				$$.classe = "Boolean";
 
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " && " + $3.label +"("+ $$.val + ")" + ";\n";
+						" = " + $1.label + " && " + $3.label + ";\n";
 			}
 			| E TK_DISNJUNCAO E
 			{
@@ -432,7 +479,7 @@ E 			: E '+' E
 				$$.classe = "Boolean";
 
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " || " + $3.label +"("+ $$.val + ")" + ";\n";
+						" = " + $1.label + " || " + $3.label + ";\n";
 			}
 			| '!'E
 			{

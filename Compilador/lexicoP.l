@@ -39,6 +39,8 @@ VARI {LETRA}({LETRA}|{NUM})*
 
 "=="        {return TK_IGUALDADE;}
 
+"!="        {return TK_DESIGUALDADE;}
+
 "&&"        {return TK_CONJUNCAO;}
 
 "||"        {return TK_DISNJUNCAO;}

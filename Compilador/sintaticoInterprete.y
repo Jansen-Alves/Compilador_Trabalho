@@ -31,7 +31,7 @@ struct atributos
 
 int yylex(void);
 void yyerror(string);
-string gentempcode(string tipo);
+string gentempcode();
 tabelaSimbolos inserirSimbolos(string nome, string tipo, string classe);
 void alterarSimbolos(tabelaSimbolos x);
 bool verificarsimbolos(string nome);
@@ -42,7 +42,6 @@ tabelaSimbolos buscarSimbolos(string nome);
 bool traducao(string op);
 
 tabelaSimbolos Listageral[10];
-atributos Listaatributos[20];
 %}
 
 %token TK_NUM TK_STR TK_REAL TK_CHAR TK_BOOL
@@ -78,8 +77,8 @@ S 			: TK_TIPO_INT TK_MAIN '(' ')' BLOCO
 								"#define FALSE 0\n"
 								"#define bool int\n"
 								"int main(void) {\n";	
-				for(i=1; i<=var_temp_qnt; i++){
-					codigo += "\t" + Listaatributos[i].tipo +" "+ Listaatributos[i].label + ";\n";
+				for(i=0; i<qtd_simb; i++){
+					codigo += "\t" + Listageral[i].tipo +" "+ Listageral[i].nome + ";\n";
 				};
 				codigo+= "\n";
 				codigo += $5.traducao;
@@ -138,33 +137,42 @@ E 			: E '+' E
 					atributos conv;
 					int x;
 					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
-						conv.label = gentempcode("float");
+						conv.label = gentempcode();
 						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n"; 
 						$1.tipo = "float";
+						r2 = stof($1.val) + stof($3.val);
+						$$.val = to_string(r2);
 						x = 0;
 
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
-						conv.label = gentempcode("float");
+						conv.label = gentempcode();
 						conv.traducao = "\t" + conv.label + " = " + "(float) " + $3.label + ";\n"; 
 						$3.tipo = "float";
+						r2= stof($1.val) + stof($3.val);
+						cout<< r2 << endl;
+						$$.val = to_string(r2);
 						x = 1;
 
 					}else if($1.tipo.compare("int") == 0 && $3.tipo.compare("char") == 0){
-						conv.label = gentempcode("int");
+						conv.label = gentempcode();
 						conv.traducao = "\t" + conv.label + "=" + "(int) " + $3.label + ";\n"; 
 						$3.tipo = "int";
+						r1 = stoi($1.val) + stoi($3.val);
+						$$.val = to_string(r1);
 						x = 1;
 
 					}else if($1.tipo.compare("char") == 0 && $3.tipo.compare("int") == 0){
-						conv.label = gentempcode("int");
+						conv.label = gentempcode();
 						conv.traducao = "\t" + conv.label + "=" + "(int) " + $1.label + ";\n"; 
 						$1.tipo = "int";
+						r1 = stoi($1.val) + stoi($3.val);
+						$$.val = to_string(r1);
 						x = 0;
 						
 					}else{
 						yyerror("Tipos incompativeis para essa operação");
 					}
-					$$.label = gentempcode($1.tipo);
+					$$.label = gentempcode();
 					$$.tipo = $1.tipo;
 					$$.classe = $1.classe;
 					
@@ -179,10 +187,18 @@ E 			: E '+' E
 
 				}
 				else{
-					if($1.tipo.compare("bool")==0){
+					if($1.tipo.compare("int") == 0){
+						r1 = stoi($1.val) + stoi($3.val);
+						$$.val = to_string(r1);
+					}else if($1.tipo.compare("float") == 0){
+						r2 = stof($1.val) + stof($3.val);
+						$$.val = to_string(r2);
+					}else if($1.tipo.compare("char") == 0){
+						$$.val = $1.val + $2.val;
+					}else{
 						yyerror("Tipos incompativeis para essa operação");
 					}
-					$$.label = gentempcode($1.tipo);
+					$$.label = gentempcode();
 					$$.tipo = $1.tipo;
 					$$.classe = $1.classe;
 				
@@ -200,21 +216,25 @@ E 			: E '+' E
 					atributos conv;
 					int x;
 					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
-						conv.label = gentempcode("float");
+						conv.label = gentempcode();
 						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n"; 
 						$1.tipo = "float";
+						r2 = stof($1.val) - stof($3.val);
+						$$.val = to_string(r2);
 						x = 0;
 
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
-						conv.label = gentempcode("float");
+						conv.label = gentempcode();
 						conv.traducao = "\t" + conv.label + " = " + "(float) " + $3.label + ";\n"; 
 						$3.tipo = "float";
+						r2= stof($1.val) - stof($3.val);
+						$$.val = to_string(r2);
 						x = 1;
 
 					}else{
 						yyerror("Tipos incompativeis para essa operação");
 					}
-					$$.label = gentempcode($1.tipo);
+					$$.label = gentempcode();
 					$$.tipo = $1.tipo;
 					$$.classe = $1.classe;
 					
@@ -229,10 +249,16 @@ E 			: E '+' E
 
 				}
 				else{
-					if($1.tipo.compare("bool")==0 || $1.tipo.compare("char") == 0){
+					if($1.tipo.compare("int") == 0){
+						r1 = stoi($1.val) - stoi($3.val);
+						$$.val = to_string(r1);
+					}else if($1.tipo.compare("float") == 0){
+						r2 = stof($1.val) - stof($3.val);
+						$$.val = to_string(r2);
+					}else{
 						yyerror("Tipos incompativeis para essa operação");
 					}
-					$$.label = gentempcode($1.tipo);
+					$$.label = gentempcode();
 					$$.tipo = $1.tipo;
 					$$.classe = $1.classe;
 				
@@ -250,21 +276,25 @@ E 			: E '+' E
 					atributos conv;
 					int x;
 					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
-						conv.label = gentempcode("float");
+						conv.label = gentempcode();
 						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n"; 
 						$1.tipo = "float";
+						r2 = stof($1.val) / stof($3.val);
+						$$.val = to_string(r2);
 						x = 0;
 
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
-						conv.label = gentempcode("float");
+						conv.label = gentempcode();
 						conv.traducao = "\t" + conv.label + " = " + "(float) " + $3.label + ";\n"; 
 						$3.tipo = "float";
+						r2= stof($1.val) / stof($3.val);
+						$$.val = to_string(r2);
 						x = 1;
 
 					}else{
 						yyerror("Tipos incompativeis para essa operação");
 					}
-					$$.label = gentempcode($1.tipo);
+					$$.label = gentempcode();
 					$$.tipo = $1.tipo;
 					$$.classe = $1.classe;
 					
@@ -279,10 +309,16 @@ E 			: E '+' E
 
 				}
 				else{
-					if($1.tipo.compare("bool")==0 || $1.tipo.compare("char") == 0){
+					if($1.tipo.compare("int") == 0){
+						r1 = stoi($1.val) / stoi($3.val);
+						$$.val = to_string(r1);
+					}else if($1.tipo.compare("float") == 0){
+						r2 = stof($1.val) / stof($3.val);
+						$$.val = to_string(r2);
+					}else{
 						yyerror("Tipos incompativeis para essa operação");
 					}
-					$$.label = gentempcode($1.tipo);
+					$$.label = gentempcode();
 					$$.tipo = $1.tipo;
 					$$.classe = $1.classe;
 				
@@ -300,21 +336,25 @@ E 			: E '+' E
 					atributos conv;
 					int x;
 					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
-						conv.label = gentempcode("float");
+						conv.label = gentempcode();
 						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n"; 
 						$1.tipo = "float";
+						r2 = stof($1.val) * stof($3.val);
+						$$.val = to_string(r2);
 						x = 0;
 
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
-						conv.label = gentempcode("float");
+						conv.label = gentempcode();
 						conv.traducao = "\t" + conv.label + " = " + "(float) " + $3.label + ";\n"; 
 						$3.tipo = "float";
+						r2= stof($1.val) * stof($3.val);
+						$$.val = to_string(r2);
 						x = 1;
 
 					}else{
 						yyerror("Tipos incompativeis para essa operação");
 					}
-					$$.label = gentempcode($1.tipo);
+					$$.label = gentempcode();
 					$$.tipo = $1.tipo;
 					$$.classe = $1.classe;
 					
@@ -329,10 +369,16 @@ E 			: E '+' E
 
 				}
 				else{
-					if($1.tipo.compare("bool")==0 || $1.tipo.compare("char") == 0){
+					if($1.tipo.compare("int") == 0){
+						r1 = stoi($1.val) * stoi($3.val);
+						$$.val = to_string(r1);
+					}else if($1.tipo.compare("float") == 0){
+						r2 = stof($1.val) * stof($3.val);
+						$$.val = to_string(r2);
+					}else{
 						yyerror("Tipos incompativeis para essa operação");
 					}
-					$$.label = gentempcode($1.tipo);
+					$$.label = gentempcode();
 					$$.tipo = $1.tipo;
 					$$.classe = $1.classe;
 				
@@ -350,21 +396,29 @@ E 			: E '+' E
 					atributos conv;
 					int x;
 					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
-						conv.label = gentempcode("float");
+						conv.label = gentempcode();
 						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n"; 
 						$1.tipo = "float";
+						double dividend = stof($1.val);
+            			double divisor = stof($3.val);
+            			r2 = dividend - static_cast<int>(dividend / divisor) * divisor;
+						$$.val = to_string(r2);
 						x = 0;
 
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
-						conv.label = gentempcode("float");
+						conv.label = gentempcode();
 						conv.traducao = "\t" + conv.label + " = " + "(float) " + $3.label + ";\n"; 
 						$3.tipo = "float";
+						double dividend = stof($1.val);
+            			double divisor = stof($3.val);
+            			r2 = dividend - static_cast<int>(dividend / divisor) * divisor;
+						$$.val = to_string(r2);
 						x = 1;
 
 					}else{
 						yyerror("Tipos incompativeis para essa operação");
 					}
-					$$.label = gentempcode($1.tipo);
+					$$.label = gentempcode();
 					$$.tipo = $1.tipo;
 					$$.classe = $1.classe;
 					
@@ -379,11 +433,18 @@ E 			: E '+' E
 
 				}
 				else{
-					if($1.tipo.compare("bool")==0 || $1.tipo.compare("char") == 0){
+					if($1.tipo.compare("int") == 0){
+						r1 = stoi($1.val) % stoi($3.val);
+						$$.val = to_string(r1);
+					}else if($1.tipo.compare("float") == 0){
+						double dividend = stof($1.val);
+            			double divisor = stof($3.val);
+            			r2 = dividend - static_cast<int>(dividend / divisor) * divisor;
+						$$.val = to_string(r2);
+					}else{
 						yyerror("Tipos incompativeis para essa operação");
 					}
-					
-					$$.label = gentempcode($1.tipo);
+					$$.label = gentempcode();
 					$$.tipo = $1.tipo;
 					$$.classe = $1.classe;
 				
@@ -401,21 +462,34 @@ E 			: E '+' E
 					atributos conv;
 					int x;
 					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
-						conv.label = gentempcode("float");
+						conv.label = gentempcode();
 						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n"; 
 						$1.tipo = "float";
+						for (int i = 0; i < stoi($3.val); ++i) 
+						{
+							
+                			r2 = stof($1.val) * r2;
+							cout << r2 << endl;
+            			}	
+						$$.val = to_string(r2);
 						x = 0;
 
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
-						conv.label = gentempcode("float");
+						conv.label = gentempcode();
 						conv.traducao = "\t" + conv.label + " = " + "(float) " + $3.label + ";\n"; 
 						$3.tipo = "float";
+						for (int i = 0; i < stoi($3.val); ++i) 
+						{
+                			r2 *= stof($1.val);
+            			}	
+						$$.val = to_string(r2);
+						cout << r2 << endl;
 						x = 1;
 
 					}else{
 						yyerror("Tipos incompativeis para essa operação");
 					}
-					$$.label = gentempcode($1.tipo);
+					$$.label = gentempcode();
 					$$.tipo = $1.tipo;
 					$$.classe = $1.classe;
 					
@@ -430,11 +504,22 @@ E 			: E '+' E
 
 				}
 				else{
-					if($1.tipo.compare("bool")==0 || $1.tipo.compare("char") == 0){
+					if($1.tipo.compare("int") == 0){
+						for (int i = 0; i < stoi($3.val); ++i) 
+						{
+                			r1 *= stoi($1.val);
+            			}	
+						$$.val = to_string(r1);
+					}else if($1.tipo.compare("float") == 0){
+						for (int i = 0; i < stoi($3.val); ++i) 
+						{
+                			r2 *= stof($1.val);
+            			}	
+						$$.val = to_string(r2);
+					}else{
 						yyerror("Tipos incompativeis para essa operação");
 					}
-					
-					$$.label = gentempcode($1.tipo);
+					$$.label = gentempcode();
 					$$.tipo = $1.tipo;
 					$$.classe = $1.classe;
 				
@@ -446,226 +531,191 @@ E 			: E '+' E
 			}
 			| E TK_MAIOR_IGUAL E
 			{
-				bool x;
-				atributos conv; 
-				if($1.tipo.compare($3.tipo) != 0){
-					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
-						x = 1;
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n";
+				bool x; 
+				if($1.classe.compare("Number") == 0 and $3.classe.compare("Number") == 0 ){
+					if($1.tipo.compare("int") == 0 && $3.tipo.compare("int") == 0){
+						x = stoi($1.val) >= stoi($3.val);
+					}else if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
+						x = stoi($1.val) >= stof($3.val);
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
-						x = 0;
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $3.label + ";\n";
-					}else{
-						yyerror("Tipo incompativel para operações lógicas");
+						x = stof($1.val) >= stoi($3.val);
 					}
-					$$.label = gentempcode("bool");
+					else{
+						x = stof($1.val) >= stof($3.val);
+					}
+
+					if(x){
+						$$.val = "TRUE";
+					}else{
+						$$.val = "FALSE";
+					}
+					$$.label = gentempcode();
 					$$.tipo = "bool";
 					$$.classe = "Boolean";
-					
-					if(x == 0){
-					$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
-							" = " + conv.label + " >= " + $3.label + ";\n";
-					}else{
-						$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
-							" = " + $1.label + " >= " + conv.label + ";\n";
-					}
 				}else{
-					if($1.traducao.compare("bool") == 0){
-						yyerror("Tipo incompativel para operações lógicas");
-					}
-					$$.label = gentempcode("bool");
-					$$.tipo = "bool";
-					$$.classe = "Boolean";
-					$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " >= " + $3.label + ";\n";
+					yyerror("Tipo incompativel para operações lógicas");
 				}
 				
+				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+						" = " + $1.label + " >= " + $3.label + ";\n";
 			}
 			| E TK_MENOR_IGUAL E
 			{
-				bool x;
-				atributos conv; 
-				if($1.tipo.compare($3.tipo) != 0){
-					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
-						x = 1;
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n";
+				bool x; 
+				if($1.classe.compare("Number") == 0 and $3.classe.compare("Number") == 0 ){
+					if($1.tipo.compare("int") == 0 && $3.tipo.compare("int") == 0){
+						x = stoi($1.val) <= stoi($3.val);
+					}else if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
+						x = stoi($1.val) <= stof($3.val);
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
-						x = 0;
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $3.label + ";\n";
-					}else{
-						yyerror("Tipo incompativel para operações lógicas");
+						x = stof($1.val) <= stoi($3.val);
 					}
-					$$.label = gentempcode("bool");
+					else{
+						x = stof($1.val) <= stof($3.val);
+					}
+
+					if(x){
+						$$.val = "TRUE";
+					}else{
+						$$.val = "FALSE";
+					}
+					$$.label = gentempcode();
 					$$.tipo = "bool";
 					$$.classe = "Boolean";
-					
-					if(x == 0){
-					$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
-							" = " + conv.label + " <= " + $3.label + ";\n";
-					}else{
-						$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
-							" = " + $1.label + " <= " + conv.label + ";\n";
-					}
 				}else{
-					if($1.traducao.compare("bool") == 0){
-						yyerror("Tipo incompativel para operações lógicas");
-					}
-					$$.label = gentempcode("bool");
-					$$.tipo = "bool";
-					$$.classe = "Boolean";
-					$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " <= " + $3.label + ";\n";
+					yyerror("Tipo incompativel para operações lógicas");
 				}
+				//cout << "valor da operação " << $$.val <<endl;
+				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+						" = " + $1.label + " <= " + $3.label+ ";\n";
 			}
 			| E TK_MAIOR E
 			{
-				bool x;
-				atributos conv; 
-				if($1.tipo.compare($3.tipo) != 0){
-					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
-						x = 1;
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n";
+				bool x; 
+				if($1.classe.compare("Number") == 0 and $3.classe.compare("Number") == 0 ){
+					if($1.tipo.compare("int") == 0 && $3.tipo.compare("int") == 0){
+						x = stoi($1.val) > stoi($3.val);
+					}else if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
+						x = stoi($1.val) > stof($3.val);
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
-						x = 0;
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $3.label + ";\n";
-					}else{
-						yyerror("Tipo incompativel para operações lógicas");
+						x = stof($1.val) > stoi($3.val);
 					}
-					$$.label = gentempcode("bool");
+					else{
+						x = stof($1.val) > stof($3.val);
+					}
+
+					if(x){
+						$$.val = "TRUE";
+					}else{
+						$$.val = "FALSE";
+					}
+					$$.label = gentempcode();
 					$$.tipo = "bool";
 					$$.classe = "Boolean";
-					
-					if(x == 0){
-					$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
-							" = " + conv.label + " > " + $3.label + ";\n";
-					}else{
-						$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
-							" = " + $1.label + " > " + conv.label + ";\n";
-					}
 				}else{
-					if($1.traducao.compare("bool") == 0){
-						yyerror("Tipo incompativel para operações lógicas");
-					}
-					$$.label = gentempcode("bool");
-					$$.tipo = "bool";
-					$$.classe = "Boolean";
-					$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " > " + $3.label + ";\n";
+					yyerror("Tipo incompativel para operações lógicas");
 				}
+				//cout << "valor da operação " << $$.val <<endl;
+
+				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+						" = " + $1.label + " > " + $3.label  + ";\n";
 			}
 			| E TK_MENOR E
 			{
-				bool x;
-				atributos conv; 
-				if($1.tipo.compare($3.tipo) != 0){
-					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
-						x = 1;
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n";
+				bool x; 
+				if($1.classe.compare("Number") == 0 and $3.classe.compare("Number") == 0 ){
+					if($1.tipo.compare("int") == 0 && $3.tipo.compare("int") == 0){
+						x = stoi($1.val) < stoi($3.val);
+					}else if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
+						x = stoi($1.val) < stof($3.val);
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
-						x = 0;
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $3.label + ";\n";
-					}else{
-						yyerror("Tipo incompativel para operações lógicas");
+						x = stof($1.val) < stoi($3.val);
 					}
-					$$.label = gentempcode("bool");
+					else{
+						x = stof($1.val) < stof($3.val);
+					}
+
+					if(x){
+						$$.val = "TRUE";
+					}else{
+						$$.val = "FALSE";
+					}
+					$$.label = gentempcode();
 					$$.tipo = "bool";
 					$$.classe = "Boolean";
-					
-					if(x == 0){
-					$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
-							" = " + conv.label + " < " + $3.label + ";\n";
-					}else{
-						$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
-							" = " + $1.label + " < " + conv.label + ";\n";
-					}
 				}else{
-					if($1.traducao.compare("bool") == 0){
-						yyerror("Tipo incompativel para operações lógicas");
-					}
-					$$.label = gentempcode("bool");
-					$$.tipo = "bool";
-					$$.classe = "Boolean";
-					$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " < " + $3.label + ";\n";
+					yyerror("Tipo incompativel para operações lógicas");
 				}
+				//cout << "valor da operação " << $$.val <<endl;
+
+				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+						" = " + $1.label + " < " + $3.label + ";\n";
 			}
 			| E TK_IGUALDADE E
 			{
-				bool x;
-				atributos conv; 
-				if($1.tipo.compare($3.tipo) != 0){
-					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
-						x = 1;
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n";
+				bool x; 
+				if($1.classe.compare("Number") == 0 and $3.classe.compare("Number") == 0 ){
+					if($1.tipo.compare("int") == 0 && $3.tipo.compare("int") == 0){
+						x = stoi($1.val) == stoi($3.val);
+					}else if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
+						x = stoi($1.val) == stof($3.val);
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
-						x = 0;
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $3.label + ";\n";
-					}else{
-						yyerror("Tipo incompativel para operações lógicas");
+						x = stof($1.val) == stoi($3.val);
 					}
-					$$.label = gentempcode("bool");
-					$$.tipo = "bool";
-					$$.classe = "Boolean";
-					
-					if(x == 0){
-					$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
-							" = " + conv.label + " == " + $3.label + ";\n";
-					}else{
-						$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
-							" = " + $1.label + " == " + conv.label + ";\n";
+					else{
+						x = stof($1.val) == stof($3.val);
 					}
-				}else{
-					$$.label = gentempcode("bool");
-					$$.tipo = "bool";
-					$$.classe = "Boolean";
-					$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " == " + $3.label + ";\n";
+
+				}else if($1.classe.compare("Character") == 0 && $3.classe.compare("Character") == 0){
+					x = $1.val == $3.val;
 				}
+
+				if(x){
+						$$.val = "TRUE";
+					}else{
+						$$.val = "FALSE";
+					}
+					$$.label = gentempcode();
+					$$.tipo = "bool";
+					$$.classe = "Boolean";
+
+				//cout << "valor da operação " << $$.val <<endl;
+
+				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+						" = " + $1.label + " == " + $3.label + ";\n";
 			}
 			| E TK_DESIGUALDADE E
 			{
-				bool x;
-				atributos conv; 
-				if($1.tipo.compare($3.tipo) != 0){
-					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
-						x = 1;
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n";
+				bool x; 
+				if($1.classe.compare("Number") == 0 and $3.classe.compare("Number") == 0 ){
+					if($1.tipo.compare("int") == 0 && $3.tipo.compare("int") == 0){
+						x = stoi($1.val) != stoi($3.val);
+					}else if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
+						x = stoi($1.val) != stof($3.val);
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
-						x = 0;
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $3.label + ";\n";
-					}else{
-						yyerror("Tipo incompativel para operações lógicas");
+						x = stof($1.val) != stoi($3.val);
 					}
-					$$.label = gentempcode("bool");
-					$$.tipo = "bool";
-					$$.classe = "Boolean";
-					
-					if(x == 0){
-					$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
-							" = " + conv.label + " != " + $3.label + ";\n";
-					}else{
-						$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
-							" = " + $1.label + " != " + conv.label + ";\n";
+					else{
+						x = stof($1.val) != stof($3.val);
 					}
-				}else{
-					$$.label = gentempcode("bool");
-					$$.tipo = "bool";
-					$$.classe = "Boolean";
-					$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " != " + $3.label + ";\n";
+
+				}else if($1.classe.compare("Character") == 0 && $3.classe.compare("Character") == 0){
+					x = $1.val != $3.val;
 				}
+
+				if(x){
+						$$.val = "TRUE";
+					}else{
+						$$.val = "FALSE";
+					}
+					$$.label = gentempcode();
+					$$.tipo = "bool";
+					$$.classe = "Boolean";
+
+				//cout << "valor da operação " << $$.val <<endl;
+
+				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+						" = " + $1.label + " != " + $3.label + ";\n";
 			}
 			| E TK_CONJUNCAO E
 			{
@@ -675,9 +725,12 @@ E 			: E '+' E
 				}else{
 					yyerror("Tipos incompativeis para essa operação");
 				}
-
-				$$.val = $1.label +" && " + $3.label;
-				$$.label = gentempcode("bool");
+				if(x){
+					$$.val = "TRUE";
+				}else{
+					$$.val = "FALSE";
+				}
+				$$.label = gentempcode();
 				$$.tipo = "bool";
 				$$.classe = "Boolean";
 
@@ -692,10 +745,12 @@ E 			: E '+' E
 				}else{
 					yyerror("Tipos incompativeis para essa operação");
 				}
-
-
-				$$.val = $1.label +" || " + $3.label;
-				$$.label = gentempcode("bool");
+				if(x){
+					$$.val = "TRUE";
+				}else{
+					$$.val = "FALSE";
+				}
+				$$.label = gentempcode();
 				$$.tipo = "bool";
 				$$.classe = "Boolean";
 
@@ -710,8 +765,12 @@ E 			: E '+' E
 				}else{
 					yyerror("Tipo incompativeis para essa operação");
 				}
-				$$.val = "!" +$2.label;
-				$$.label = gentempcode("bool");
+				if(x){
+					$$.val = "TRUE";
+				}else{
+					$$.val = "FALSE";
+				}
+				$$.label = gentempcode();
 				$$.tipo = "bool";
 				$$.classe = "Boolean";
 
@@ -722,6 +781,7 @@ E 			: E '+' E
 			{
 				tabelaSimbolos flag;
 				flag = buscarSimbolos($1.label);
+				//cout << $1.label << " primeira verificação"<< endl;
 				if(flag.endereco.compare("") == 0){
 					flag = inserirSimbolos($1.label, $3.tipo, $3.classe);
 				}else if(flag.tipo.compare($3.tipo) != 0){
@@ -730,27 +790,27 @@ E 			: E '+' E
 					yyerror("Atribuição incorreta, tipo de variavel incompativel");
 					
 				}
-				$$.label = flag.endereco;
+				$$.label = $1.label;
 				$$.tipo = $3.tipo;
 				$$.val = $3.val;
 				flag.val = $$.val;
 				alterarSimbolos(flag);
 				cout << flag.nome << endl;
-				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + " = " + $3.label + ";\n";
+				$$.traducao = $1.traducao + $3.traducao + "\t" + $1.label + " = " + $3.label + ";\n";
 			}
 			| TK_NUM
 			{
-				$$.label = gentempcode("int");
+				$$.label = gentempcode();
 				$$.tipo = "int";
 				$$.classe = "Number";
 				$$.val = $1.label;
 				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
 
-				//cout << "Variavel atribuida " << $$.val << endl;
+				cout << "Variavel atribuida " << $$.val << endl;
 			}
 			| TK_REAL
 			{
-				$$.label = gentempcode("float");
+				$$.label = gentempcode();
 				$$.tipo = "float";
 				$$.classe = "Number";
 				$$.val = $1.label;
@@ -758,14 +818,14 @@ E 			: E '+' E
 			}
 			| TK_CHAR
 			{
-				$$.label = gentempcode("char");
+				$$.label = gentempcode();
 				$$.tipo = "char";
 				$$.classe = "String";
 				$$.val = $1.label;
 				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
 			}
 			|TK_BOOL{
-				$$.label = gentempcode("bool");
+				$$.label = gentempcode();
 				$$.tipo = "bool";
 				$$.classe = "Boolean";
 				$$.val = $1.label;
@@ -794,14 +854,9 @@ E 			: E '+' E
 
 int yyparse();
 
-string gentempcode(string tipo)
+string gentempcode()
 {
-	atributos x;
 	var_temp_qnt++;
-	x.label = "t" + to_string(var_temp_qnt);
-	x.tipo = tipo;
-
-	Listaatributos[var_temp_qnt] = x;
 	return "t" + to_string(var_temp_qnt);
 }
 using namespace std;
@@ -879,7 +934,7 @@ tabelaSimbolos inserirSimbolos(string nome, string tipo, string classe){
 	var.tipo = tipo;
 	var.classe = classe;
 	var.val = "";
-	var.endereco = gentempcode(tipo);
+	var.endereco = gentempcode();
 	
 	//cout << var.nome << ' ' << var.tipo << ' ' << var.endereco <<endl;
 	Listageral[qtd_simb] = var;

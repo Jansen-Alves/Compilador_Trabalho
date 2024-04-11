@@ -47,7 +47,7 @@ atributos Listaatributos[20];
 
 %token TK_NUM TK_STR TK_REAL TK_CHAR TK_BOOL
 %token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLOAT
-%token TK_TIPO_CHAR TK_TIPO_BOOL
+%token TK_TIPO_CHAR TK_TIPO_BOOL TK_CONV
 %token TK_MAIOR_IGUAL TK_MENOR_IGUAL TK_MAIOR TK_MENOR TK_IGUALDADE TK_DESIGUALDADE
 %token TK_CONJUNCAO TK_DISNJUNCAO
 %token TK_FIM TK_ERROR
@@ -718,6 +718,36 @@ E 			: E '+' E
 				$$.traducao = $2.traducao + "\t" + $$.label + 
 						" = " +"!"+ $2.label +"("+ $$.val+ ")"+ ";\n";
 			}
+			| '(' TK_TIPO_INT ')' E
+			{
+				int conv;
+				if($4.tipo.compare("int") == 0 || $4.tipo.compare("float") == 0){
+					$$.label = gentempcode("int");
+					$$.tipo = "int";
+					conv = stoi($4.val);
+					$$.val = to_string(conv);
+					$$.traducao = "\t" + $$.label + " = " + "(int) " + $4.label + ";\n"; 
+				}else{
+					yyerror("Tipo de expressão incompativel para a conversão");
+				}
+			}
+			| '(' TK_TIPO_FLOAT ')' E
+			{
+				float conv;
+				if($4.tipo.compare("int") == 0 || $4.tipo.compare("float") == 0){
+					$$.label = gentempcode("int");
+					$$.tipo = "float";
+					conv = stof($4.val);
+					$$.val = to_string(conv);
+					$$.traducao = "\t" + $$.label + " = " + "(float) " + $4.label + "-"+ $$.val + ";\n"; 
+				}else{
+					yyerror("Tipo de expressão incompativel para a conversão");
+				}
+			}
+			| '(' TK_TIPO_BOOL ')' E
+			{
+				yyerror("Tipo de expressão incompativel para a conversão");
+			}
 			| TK_ID '=' E
 			{
 				tabelaSimbolos flag;
@@ -785,6 +815,12 @@ E 			: E '+' E
 				$$.traducao = "\t" + $$.label + " = " + $1.label + ";\n";
 				//cout << "Variavel atribuida " << $$.val << endl;
 
+			}
+			| TK_CONV
+			{
+				$$.label = gentempcode("char");
+				$$.val = $1.label;
+				cout << $$.val << endl;
 			}
 			;
 

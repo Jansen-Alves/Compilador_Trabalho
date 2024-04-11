@@ -65,16 +65,17 @@ extern int yydebug;
     TK_TIPO_FLOAT = 266,           /* TK_TIPO_FLOAT  */
     TK_TIPO_CHAR = 267,            /* TK_TIPO_CHAR  */
     TK_TIPO_BOOL = 268,            /* TK_TIPO_BOOL  */
-    TK_MAIOR_IGUAL = 269,          /* TK_MAIOR_IGUAL  */
-    TK_MENOR_IGUAL = 270,          /* TK_MENOR_IGUAL  */
-    TK_MAIOR = 271,                /* TK_MAIOR  */
-    TK_MENOR = 272,                /* TK_MENOR  */
-    TK_IGUALDADE = 273,            /* TK_IGUALDADE  */
-    TK_DESIGUALDADE = 274,         /* TK_DESIGUALDADE  */
-    TK_CONJUNCAO = 275,            /* TK_CONJUNCAO  */
-    TK_DISNJUNCAO = 276,           /* TK_DISNJUNCAO  */
-    TK_FIM = 277,                  /* TK_FIM  */
-    TK_ERROR = 278                 /* TK_ERROR  */
+    TK_CONV = 269,                 /* TK_CONV  */
+    TK_MAIOR_IGUAL = 270,          /* TK_MAIOR_IGUAL  */
+    TK_MENOR_IGUAL = 271,          /* TK_MENOR_IGUAL  */
+    TK_MAIOR = 272,                /* TK_MAIOR  */
+    TK_MENOR = 273,                /* TK_MENOR  */
+    TK_IGUALDADE = 274,            /* TK_IGUALDADE  */
+    TK_DESIGUALDADE = 275,         /* TK_DESIGUALDADE  */
+    TK_CONJUNCAO = 276,            /* TK_CONJUNCAO  */
+    TK_DISNJUNCAO = 277,           /* TK_DISNJUNCAO  */
+    TK_FIM = 278,                  /* TK_FIM  */
+    TK_ERROR = 279                 /* TK_ERROR  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -94,16 +95,17 @@ extern int yydebug;
 #define TK_TIPO_FLOAT 266
 #define TK_TIPO_CHAR 267
 #define TK_TIPO_BOOL 268
-#define TK_MAIOR_IGUAL 269
-#define TK_MENOR_IGUAL 270
-#define TK_MAIOR 271
-#define TK_MENOR 272
-#define TK_IGUALDADE 273
-#define TK_DESIGUALDADE 274
-#define TK_CONJUNCAO 275
-#define TK_DISNJUNCAO 276
-#define TK_FIM 277
-#define TK_ERROR 278
+#define TK_CONV 269
+#define TK_MAIOR_IGUAL 270
+#define TK_MENOR_IGUAL 271
+#define TK_MAIOR 272
+#define TK_MENOR 273
+#define TK_IGUALDADE 274
+#define TK_DESIGUALDADE 275
+#define TK_CONJUNCAO 276
+#define TK_DISNJUNCAO 277
+#define TK_FIM 278
+#define TK_ERROR 279
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

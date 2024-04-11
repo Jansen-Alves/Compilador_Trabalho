@@ -6,7 +6,7 @@
 ESPACO [ \t]
 DIGITO [0-9]
 LETRA [A-Za-z_]
-
+TIPO ("interger"|"float"|"char"|"bool")
 DELIM {ESPACO}+
 NUM {DIGITO}+
 REAL {NUM}+("."{NUM}+)?
@@ -58,6 +58,8 @@ VARI {LETRA}({LETRA}|{NUM})*
 
 
 {NUM}		{ yylval.label = yytext; return TK_NUM; }
+
+{TIPO}      { yylval.label = yytext; return TK_CONV; }
 
 {REAL}      { yylval.label = yytext; return TK_REAL;}
 

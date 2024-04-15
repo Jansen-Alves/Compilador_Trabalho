@@ -63,7 +63,7 @@ atributos Listaatributos[20];
 %left '+' '-'
 %left '*' '/'
 %left '^'
-
+%left '(' ')'
 
 %%
 
@@ -716,7 +716,7 @@ E 			: E '+' E
 				$$.classe = "Boolean";
 
 				$$.traducao = $2.traducao + "\t" + $$.label + 
-						" = " +"!"+ $2.label +"("+ $$.val+ ")"+ ";\n";
+						" = " +"!"+ $2.label + ";\n";
 			}
 			| '(' TK_TIPO_INT ')' E
 			{
@@ -726,7 +726,7 @@ E 			: E '+' E
 					$$.tipo = "int";
 					conv = stoi($4.val);
 					$$.val = to_string(conv);
-					$$.traducao = "\t" + $$.label + " = " + "(int) " + $4.label + ";\n"; 
+					$$.traducao = $4.traducao + "\t" + $$.label + " = " + "(int) " + $4.label + ";\n"; 
 				}else{
 					yyerror("Tipo de expressão incompativel para a conversão");
 				}

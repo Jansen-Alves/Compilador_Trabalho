@@ -59,8 +59,6 @@ VARI {LETRA}({LETRA}|{NUM})*
 
 {NUM}		{ yylval.label = yytext; return TK_NUM; }
 
-{TIPO}      { yylval.label = yytext; return TK_CONV; }
-
 {REAL}      { yylval.label = yytext; return TK_REAL;}
 
 {CHAR}      {yylval.label = yytext; return TK_CHAR;}

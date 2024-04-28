@@ -61,7 +61,7 @@ atributos Listaatributos[50];
 %right TK_MENOR TK_MENOR_IGUAL TK_MAIOR TK_MAIOR_IGUAL
 
 %right '+' '-'
-%right'*' '/' '%'
+%right '*' '/' '%'
 %right '^'
 
 %%

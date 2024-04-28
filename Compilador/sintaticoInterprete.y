@@ -795,8 +795,8 @@ E 			: E '+' E
 				$$.val = $3.val;
 				flag.val = $$.val;
 				alterarSimbolos(flag);
-				cout << flag.nome << endl;
-				$$.traducao = $1.traducao + $3.traducao + "\t" + $1.label + " = " + $3.label + ";\n";
+				//cout << flag.nome << endl;
+				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + " = " + $3.label + ";\n";
 			}
 			| TK_NUM
 			{

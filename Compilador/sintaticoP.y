@@ -41,8 +41,8 @@ tabelaSimbolos buscarSimbolos(string nome);
 
 bool traducao(string op);
 
-tabelaSimbolos Listageral[10];
-atributos Listaatributos[20];
+tabelaSimbolos Listageral[20];
+atributos Listaatributos[50];
 %}
 
 %token TK_NUM TK_STR TK_REAL TK_CHAR TK_BOOL
@@ -55,15 +55,17 @@ atributos Listaatributos[20];
 %start S
 
 %left TK_DISNJUNCAO
-%left TK_CONJUNCAO
+%left TK_CONJUNCAO 
 
-%left TK_IGUALDADE TK_DESIGUALDADE
+%left TK_IGUALDADE  TK_DESIGUALDADE
 %left TK_MENOR TK_MENOR_IGUAL TK_MAIOR TK_MAIOR_IGUAL
 
-%left '+' '-'
-%left '*' '/'
+%left '+' 
+%left'-'
+%left '*' 
+%left '/' 
+%left '%'
 %left '^'
-
 
 %%
 
@@ -88,7 +90,7 @@ S 			: TK_TIPO_INT TK_MAIN '(' ')' BLOCO
 							"\n}";
 				
 				cout << codigo << endl;
-				checarlista();
+				//checarlista();
 			}
 			;
 
@@ -139,7 +141,7 @@ E 			: E '+' E
 					int x;
 					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n"; 
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + $1.label + ";\n"; 
 						$1.tipo = "float";
 						x = 0;
 
@@ -151,7 +153,7 @@ E 			: E '+' E
 
 					}else if($1.tipo.compare("int") == 0 && $3.tipo.compare("char") == 0){
 						conv.label = gentempcode("int");
-						conv.traducao = "\t" + conv.label + "=" + "(int) " + $3.label + ";\n"; 
+						conv.traducao = "\t" + conv.label + " = " + "(int) " + $3.label + ";\n"; 
 						$3.tipo = "int";
 						x = 1;
 
@@ -201,7 +203,7 @@ E 			: E '+' E
 					int x;
 					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n"; 
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + $1.label + ";\n"; 
 						$1.tipo = "float";
 						x = 0;
 
@@ -242,56 +244,6 @@ E 			: E '+' E
 				}
 				
 			}
-			| E '/' E
-			{
-				int r1;
-				float r2;
-				if($1.tipo.compare($3.tipo) != 0 ){
-					atributos conv;
-					int x;
-					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n"; 
-						$1.tipo = "float";
-						x = 0;
-
-					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + " = " + "(float) " + $3.label + ";\n"; 
-						$3.tipo = "float";
-						x = 1;
-
-					}else{
-						yyerror("Tipos incompativeis para essa operação");
-					}
-					$$.label = gentempcode($1.tipo);
-					$$.tipo = $1.tipo;
-					$$.classe = $1.classe;
-					
-					
-					if(x == 0){
-					$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
-							" = " + conv.label + " / " + $3.label + ";\n";
-					}else{
-						$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
-							" = " + $1.label + " / " + conv.label + ";\n";
-					}
-
-				}
-				else{
-					if($1.tipo.compare("bool")==0 || $1.tipo.compare("char") == 0){
-						yyerror("Tipos incompativeis para essa operação");
-					}
-					$$.label = gentempcode($1.tipo);
-					$$.tipo = $1.tipo;
-					$$.classe = $1.classe;
-				
-				
-					$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
-						" = " + $1.label + " / " + $3.label + ";\n";
-				}
-				
-			}
 			| E '*' E
 			{
 				int r1;
@@ -301,7 +253,7 @@ E 			: E '+' E
 					int x;
 					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n"; 
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + $1.label + ";\n"; 
 						$1.tipo = "float";
 						x = 0;
 
@@ -342,7 +294,7 @@ E 			: E '+' E
 				}
 				
 			}
-			| E '%' E
+			| E '/' E
 			{
 				int r1;
 				float r2;
@@ -351,13 +303,63 @@ E 			: E '+' E
 					int x;
 					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n"; 
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + $1.label + ";\n"; 
 						$1.tipo = "float";
 						x = 0;
 
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
 						conv.label = gentempcode("float");
 						conv.traducao = "\t" + conv.label + " = " + "(float) " + $3.label + ";\n"; 
+						$3.tipo = "float";
+						x = 1;
+
+					}else{
+						yyerror("Tipos incompativeis para essa operação");
+					}
+					$$.label = gentempcode($1.tipo);
+					$$.tipo = $1.tipo;
+					$$.classe = $1.classe;
+					
+					
+					if(x == 0){
+					$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
+							" = " + conv.label + " / " + $3.label + ";\n";
+					}else{
+						$$.traducao = $1.traducao + $3.traducao + conv.traducao +"\t" + $$.label + 
+							" = " + $1.label + " / " + conv.label + ";\n";
+					}
+
+				}
+				else{
+					if($1.tipo.compare("bool")==0 || $1.tipo.compare("char") == 0){
+						yyerror("Tipos incompativeis para essa operação");
+					}
+					$$.label = gentempcode($1.tipo);
+					$$.tipo = $1.tipo;
+					$$.classe = $1.classe;
+				
+				
+					$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + 
+						" = " + $1.label + " / " + $3.label + ";\n";
+				}
+				
+			}
+			| E '%' E
+			{
+				int r1;
+				float r2;
+				if($1.tipo.compare($3.tipo) != 0 ){
+					atributos conv;
+					int x;
+					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
+						conv.label = gentempcode("int");
+						conv.traducao = "\t" + conv.label + " = " + "(int) " + $1.label + ";\n"; 
+						$1.tipo = "float";
+						x = 0;
+
+					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
+						conv.label = gentempcode("int");
+						conv.traducao = "\t" + conv.label + " = " + "(int) " + $3.label + ";\n"; 
 						$3.tipo = "float";
 						x = 1;
 
@@ -379,7 +381,7 @@ E 			: E '+' E
 
 				}
 				else{
-					if($1.tipo.compare("bool")==0 || $1.tipo.compare("char") == 0){
+					if($1.tipo.compare("bool")==0 || $1.tipo.compare("char") == 0 || $1.tipo.compare("float") == 0){
 						yyerror("Tipos incompativeis para essa operação");
 					}
 					
@@ -402,7 +404,7 @@ E 			: E '+' E
 					int x;
 					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n"; 
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + $1.label + ";\n"; 
 						$1.tipo = "float";
 						x = 0;
 
@@ -443,6 +445,24 @@ E 			: E '+' E
 						" = " + $1.label + " ^ " + $3.label + ";\n";
 				}
 				
+			}
+			| '-' E
+			{
+				if($2.tipo.compare("int") == 0 or $2.tipo.compare("float") == 0){
+					$$.label = gentempcode($2.tipo);
+					$$.tipo = $2.tipo;
+					$$.traducao = $2.traducao + "\t" + $$.label + 
+							" = " + "-" + $2.label + ";\n";
+
+				}else{
+					yyerror("Tipo da expressão é incompativel para essa operação");
+				}
+			}
+			| '(' E ')'
+			{
+				$$.label = gentempcode($2.tipo);
+				$$.tipo = $2.tipo;
+				$$.traducao = $2.traducao + "\t" + $$.label + " = " + $2.label +";\n";
 			}
 			| E TK_MAIOR_IGUAL E
 			{
@@ -726,7 +746,7 @@ E 			: E '+' E
 					$$.tipo = "int";
 					conv = stoi($4.val);
 					$$.val = to_string(conv);
-					$$.traducao = "\t" + $$.label + " = " + "(int) " + $4.label + ";\n"; 
+					$$.traducao = $4.traducao + "\t" + $$.label + " = " + "(int) " + $4.label + ";\n"; 
 				}else{
 					yyerror("Tipo de expressão incompativel para a conversão");
 				}
@@ -739,10 +759,11 @@ E 			: E '+' E
 					$$.tipo = "float";
 					conv = stof($4.val);
 					$$.val = to_string(conv);
-					$$.traducao = "\t" + $$.label + " = " + "(float) " + $4.label + "-"+ $$.val + ";\n"; 
+					$$.traducao =  $4.traducao +"\t" + $$.label + " = " + "(float) " + $4.label+";\n"; 
 				}else{
 					yyerror("Tipo de expressão incompativel para a conversão");
 				}
+
 			}
 			| '(' TK_TIPO_BOOL ')' E
 			{
@@ -755,8 +776,7 @@ E 			: E '+' E
 				if(flag.endereco.compare("") == 0){
 					flag = inserirSimbolos($1.label, $3.tipo, $3.classe);
 				}else if(flag.tipo.compare($3.tipo) != 0){
-					checarlista();
-					cout << $1.tipo << " comp" << $3.tipo << endl;
+					//checarlista();
 					yyerror("Atribuição incorreta, tipo de variavel incompativel");
 					
 				}
@@ -765,7 +785,7 @@ E 			: E '+' E
 				$$.val = $3.val;
 				flag.val = $$.val;
 				alterarSimbolos(flag);
-				cout << flag.nome << endl;
+				//cout << flag.nome << endl;
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + " = " + $3.label + ";\n";
 			}
 			| TK_NUM
@@ -820,7 +840,7 @@ E 			: E '+' E
 			{
 				$$.label = gentempcode("char");
 				$$.val = $1.label;
-				cout << $$.val << endl;
+				//cout << $$.val << endl;
 			}
 			;
 

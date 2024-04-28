@@ -54,18 +54,15 @@ atributos Listaatributos[50];
 
 %start S
 
-%left TK_DISNJUNCAO
-%left TK_CONJUNCAO 
+%right TK_DISNJUNCAO
+%right TK_CONJUNCAO 
 
-%left TK_IGUALDADE  TK_DESIGUALDADE
-%left TK_MENOR TK_MENOR_IGUAL TK_MAIOR TK_MAIOR_IGUAL
+%right TK_IGUALDADE  TK_DESIGUALDADE
+%right TK_MENOR TK_MENOR_IGUAL TK_MAIOR TK_MAIOR_IGUAL
 
-%left '+' 
-%left'-'
-%left '*' 
-%left '/' 
-%left '%'
-%left '^'
+%right '+' '-'
+%right'*' '/' '%'
+%right '^'
 
 %%
 

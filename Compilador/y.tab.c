@@ -697,7 +697,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-20)
+#define YYPACT_NINF (-26)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -711,14 +711,14 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-      -7,    -4,     5,   -13,   -20,   -15,     0,    39,   -20,   -20,
-     -20,   -20,   -20,    -3,    26,    27,    28,    29,   -20,    71,
-      53,    71,     9,    39,    93,    71,    12,    19,    20,    22,
-     -18,    36,    37,    40,   114,   132,   -20,   -20,    71,    71,
+      -7,    -4,     5,   -18,   -26,   -21,   -17,    39,   -26,   -26,
+     -26,   -26,   -26,   -25,     6,     8,     9,    24,   -26,    71,
+      53,    71,     0,    39,    93,    71,     1,     2,     3,    12,
+     -20,    11,    22,    23,   114,   132,   -26,   -26,    71,    71,
       71,    71,    71,    71,    71,    71,    71,    71,    71,    71,
-      71,    71,   -20,   132,   -20,   -20,   -20,   -20,    71,    71,
-      71,   -20,   170,   170,   170,   170,   164,   164,   148,   132,
-     -18,   -18,   -14,   -14,   -14,    31,   132,   132,   132
+      71,    71,   -26,   132,   -26,   -26,   -26,   -26,    71,    71,
+      71,   -26,   170,   170,   170,   170,   164,   164,   148,   132,
+     -20,   -20,   -16,   -16,   -16,   -26,   132,   132,   132
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -739,7 +739,7 @@ static const yytype_int8 yydefact[] =
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -20,   -20,   -20,    48,   -20,   -19
+     -26,   -26,   -26,    34,   -26,   -19
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
@@ -753,14 +753,14 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      30,    34,    35,     1,     3,     4,    53,    46,    47,    48,
-      49,    50,    51,    48,    49,    50,    51,     6,     5,    62,
+      30,    34,    35,     1,     3,     4,    53,    48,    49,    50,
+      51,     6,    25,     5,    51,    26,     7,    27,    28,    62,
       63,    64,    65,    66,    67,    68,    69,    70,    71,    72,
-      73,    74,    75,     7,    25,    26,    27,    28,    29,    76,
-      77,    78,     9,    36,    10,    11,    12,    54,    13,    14,
-      15,    16,    17,    18,    55,    56,     9,    57,    10,    11,
-      12,    51,    13,    31,    32,    19,    33,    18,    58,    59,
-      20,    37,    60,     0,     9,    21,    10,    11,    12,    19,
+      73,    74,    75,    29,    36,     0,    54,    55,    56,    76,
+      77,    78,     9,    58,    10,    11,    12,    57,    13,    14,
+      15,    16,    17,    18,    59,    60,     9,    37,    10,    11,
+      12,     0,    13,    31,    32,    19,    33,    18,     0,     0,
+      20,     0,     0,     0,     9,    21,    10,    11,    12,    19,
       13,     0,     0,     0,    20,    18,     0,     0,     0,    21,
        0,     0,     0,     0,     0,     0,     0,    19,     0,     0,
        0,     0,    20,     0,     0,     0,     0,    21,    38,    39,
@@ -778,14 +778,14 @@ static const yytype_int8 yytable[] =
 
 static const yytype_int8 yycheck[] =
 {
-      19,    20,    21,    10,     8,     0,    25,    25,    26,    27,
-      28,    29,    30,    27,    28,    29,    30,    32,    31,    38,
+      19,    20,    21,    10,     8,     0,    25,    27,    28,    29,
+      30,    32,    37,    31,    30,     9,    33,     9,     9,    38,
       39,    40,    41,    42,    43,    44,    45,    46,    47,    48,
-      49,    50,    51,    33,    37,     9,     9,     9,     9,    58,
-      59,    60,     3,    34,     5,     6,     7,    35,     9,    10,
-      11,    12,    13,    14,    35,    35,     3,    35,     5,     6,
-       7,    30,     9,    10,    11,    26,    13,    14,    32,    32,
-      31,    23,    32,    -1,     3,    36,     5,     6,     7,    26,
+      49,    50,    51,     9,    34,    -1,    35,    35,    35,    58,
+      59,    60,     3,    32,     5,     6,     7,    35,     9,    10,
+      11,    12,    13,    14,    32,    32,     3,    23,     5,     6,
+       7,    -1,     9,    10,    11,    26,    13,    14,    -1,    -1,
+      31,    -1,    -1,    -1,     3,    36,     5,     6,     7,    26,
        9,    -1,    -1,    -1,    31,    14,    -1,    -1,    -1,    36,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    26,    -1,    -1,
       -1,    -1,    31,    -1,    -1,    -1,    -1,    36,    15,    16,
@@ -1757,11 +1757,11 @@ yyreduce:
 					if(yyvsp[-2].tipo.compare("int") == 0 && yyvsp[0].tipo.compare("float") == 0){
 						x = 1;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + yyvsp[-2].label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[-2].label + ";\n";
 					}else if(yyvsp[-2].tipo.compare("float") == 0 && yyvsp[0].tipo.compare("int") == 0){
 						x = 0;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + yyvsp[0].label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[0].label + ";\n";
 					}else{
 						yyerror("Tipo incompativel para operações lógicas");
 					}
@@ -1800,11 +1800,11 @@ yyreduce:
 					if(yyvsp[-2].tipo.compare("int") == 0 && yyvsp[0].tipo.compare("float") == 0){
 						x = 1;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + yyvsp[-2].label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[-2].label + ";\n";
 					}else if(yyvsp[-2].tipo.compare("float") == 0 && yyvsp[0].tipo.compare("int") == 0){
 						x = 0;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + yyvsp[0].label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[0].label + ";\n";
 					}else{
 						yyerror("Tipo incompativel para operações lógicas");
 					}
@@ -1842,11 +1842,11 @@ yyreduce:
 					if(yyvsp[-2].tipo.compare("int") == 0 && yyvsp[0].tipo.compare("float") == 0){
 						x = 1;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + yyvsp[-2].label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[-2].label + ";\n";
 					}else if(yyvsp[-2].tipo.compare("float") == 0 && yyvsp[0].tipo.compare("int") == 0){
 						x = 0;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + yyvsp[0].label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[0].label + ";\n";
 					}else{
 						yyerror("Tipo incompativel para operações lógicas");
 					}
@@ -1884,11 +1884,11 @@ yyreduce:
 					if(yyvsp[-2].tipo.compare("int") == 0 && yyvsp[0].tipo.compare("float") == 0){
 						x = 1;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + yyvsp[-2].label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[-2].label + ";\n";
 					}else if(yyvsp[-2].tipo.compare("float") == 0 && yyvsp[0].tipo.compare("int") == 0){
 						x = 0;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + yyvsp[0].label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[0].label + ";\n";
 					}else{
 						yyerror("Tipo incompativel para operações lógicas");
 					}
@@ -1926,11 +1926,11 @@ yyreduce:
 					if(yyvsp[-2].tipo.compare("int") == 0 && yyvsp[0].tipo.compare("float") == 0){
 						x = 1;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + yyvsp[-2].label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[-2].label + ";\n";
 					}else if(yyvsp[-2].tipo.compare("float") == 0 && yyvsp[0].tipo.compare("int") == 0){
 						x = 0;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + yyvsp[0].label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[0].label + ";\n";
 					}else{
 						yyerror("Tipo incompativel para operações lógicas");
 					}

@@ -61,7 +61,7 @@ atributos Listaatributos[50];
 %right TK_MENOR TK_MENOR_IGUAL TK_MAIOR TK_MAIOR_IGUAL
 
 %right '+' '-'
-%right'*' '/' '%'
+%right '*' '/' '%'
 %right '^'
 
 %%
@@ -469,11 +469,11 @@ E 			: E '+' E
 					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
 						x = 1;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + $1.label + ";\n";
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
 						x = 0;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $3.label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + $3.label + ";\n";
 					}else{
 						yyerror("Tipo incompativel para operações lógicas");
 					}
@@ -508,11 +508,11 @@ E 			: E '+' E
 					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
 						x = 1;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + $1.label + ";\n";
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
 						x = 0;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $3.label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + $3.label + ";\n";
 					}else{
 						yyerror("Tipo incompativel para operações lógicas");
 					}
@@ -546,11 +546,11 @@ E 			: E '+' E
 					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
 						x = 1;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + $1.label + ";\n";
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
 						x = 0;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $3.label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + $3.label + ";\n";
 					}else{
 						yyerror("Tipo incompativel para operações lógicas");
 					}
@@ -584,11 +584,11 @@ E 			: E '+' E
 					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
 						x = 1;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + $1.label + ";\n";
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
 						x = 0;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $3.label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + $3.label + ";\n";
 					}else{
 						yyerror("Tipo incompativel para operações lógicas");
 					}
@@ -622,11 +622,11 @@ E 			: E '+' E
 					if($1.tipo.compare("int") == 0 && $3.tipo.compare("float") == 0){
 						x = 1;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $1.label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + $1.label + ";\n";
 					}else if($1.tipo.compare("float") == 0 && $3.tipo.compare("int") == 0){
 						x = 0;
 						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + "=" + "(float) " + $3.label + ";\n";
+						conv.traducao = "\t" + conv.label + " = " + "(float) " + $3.label + ";\n";
 					}else{
 						yyerror("Tipo incompativel para operações lógicas");
 					}

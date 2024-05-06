@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include 'lista_encadeada.h'
 #define bool int
 #define TRUE 1
 #define FALSE 0

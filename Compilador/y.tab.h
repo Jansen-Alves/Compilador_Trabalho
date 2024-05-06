@@ -74,8 +74,10 @@ extern int yydebug;
     TK_DESIGUALDADE = 275,         /* TK_DESIGUALDADE  */
     TK_CONJUNCAO = 276,            /* TK_CONJUNCAO  */
     TK_DISNJUNCAO = 277,           /* TK_DISNJUNCAO  */
-    TK_FIM = 278,                  /* TK_FIM  */
-    TK_ERROR = 279                 /* TK_ERROR  */
+    TK_IF = 278,                   /* TK_IF  */
+    TK_ELSE = 279,                 /* TK_ELSE  */
+    TK_FIM = 280,                  /* TK_FIM  */
+    TK_ERROR = 281                 /* TK_ERROR  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -104,8 +106,10 @@ extern int yydebug;
 #define TK_DESIGUALDADE 275
 #define TK_CONJUNCAO 276
 #define TK_DISNJUNCAO 277
-#define TK_FIM 278
-#define TK_ERROR 279
+#define TK_IF 278
+#define TK_ELSE 279
+#define TK_FIM 280
+#define TK_ERROR 281
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

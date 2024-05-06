@@ -6,7 +6,7 @@
 ESPACO [ \t]
 DIGITO [0-9]
 LETRA [A-Za-z_]
-TIPO ("interger"|"float"|"char"|"bool")
+
 DELIM {ESPACO}+
 NUM {DIGITO}+
 REAL {NUM}+("."{NUM}+)?
@@ -48,6 +48,10 @@ VARI {LETRA}({LETRA}|{NUM})*
 "TRUE"      {yylval.label = yytext; return TK_BOOL;}
 
 "FALSE"     {yylval.label = yytext; return TK_BOOL;}
+
+"if"        {yylval.label = yytext; return TK_IF;}
+
+"else"      {yylval.label = yytext; return TK_ELSE;}
 
 [(){}[\];,]	{ return *yytext; }
 

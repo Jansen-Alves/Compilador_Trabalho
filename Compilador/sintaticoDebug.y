@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <vector>
 #define bool int
 #define TRUE 1
 #define FALSE 0
@@ -12,6 +13,7 @@ using namespace std;
 int var_temp_qnt;
 string Tipagens;
 int qtd_simb;
+int qtd_tabelas;
 
 struct tabelaSimbolos{
 	string nome;
@@ -29,6 +31,12 @@ struct atributos
 	string val;
 };
 
+std::vector <atributos> listaattr;
+std::vector <tabelaSimbolos> listaSimb;
+std::vector<vector<tabelaSimbolos>>listaEscopo;
+
+
+
 int yylex(void);
 void yyerror(string);
 string gentempcode(string tipo);
@@ -39,10 +47,12 @@ void checarlista();
 void tipagem();
 tabelaSimbolos buscarSimbolos(string nome);
 
+
 bool traducao(string op);
 
 tabelaSimbolos Listageral[20];
 atributos Listaatributos[50];
+
 %}
 
 %token TK_NUM TK_STR TK_REAL TK_CHAR TK_BOOL
@@ -78,8 +88,8 @@ S 			: TK_TIPO_INT TK_MAIN '(' ')' BLOCO
 								"#define FALSE 0\n"
 								"#define bool int\n"
 								"int main(void) {\n";	
-				for(i=1; i<=var_temp_qnt; i++){
-					codigo += "\t" + Listaatributos[i].tipo +" "+ Listaatributos[i].label + ";\n";
+				for(i = 0 ; i < listaattr.size(); i++){
+					codigo += "\t" + listaattr[i].tipo +" "+ listaattr[i].label + ";\n";
 				};
 				codigo+= "\n";
 				codigo += $5.traducao;
@@ -88,13 +98,21 @@ S 			: TK_TIPO_INT TK_MAIN '(' ')' BLOCO
 							"\n}";
 				
 				cout << codigo << endl;
-				//checarlista();
+				checarlista();
+				listaattr.clear();
+				listaSimb.clear();
+				listaEscopo.clear();
 			}
 			
 			;
 
 BLOCO		: '{' COMANDOS '}'
 			{
+				cout<< "alou" << endl;
+				/*std::vector<tabelaSimbolos>v1;
+				listaEscopo.push_back(v1);
+				qtd_tabelas++;
+				cout << "quantidade de escopo: "<<  qtd_tabelas << endl;*/
 				$$.traducao = $2.traducao;
 			}
 			;
@@ -417,6 +435,7 @@ EXP 		: EXP '+' EXP
 				tabelaSimbolos flag;
 				flag = buscarSimbolos($1.label);
 				if(flag.endereco.compare("") == 0){
+					cout<< "variavel não encontrada" << endl;
 					flag = inserirSimbolos($1.label, $3.tipo, $3.classe);
 				}else if(flag.tipo.compare($3.tipo) != 0){
 					//checarlista();
@@ -500,7 +519,7 @@ string gentempcode(string tipo)
 	x.label = "t" + to_string(var_temp_qnt);
 	x.tipo = tipo;
 
-	Listaatributos[var_temp_qnt] = x;
+	listaattr.push_back(x);
 	return "t" + to_string(var_temp_qnt);
 }
 using namespace std;
@@ -526,8 +545,8 @@ void checarlista(){
 	int i;
 	tabelaSimbolos x;
 
-	for(i=0; i<qtd_simb; i++){
-		x = Listageral[i];
+	for(i=0; i<listaSimb.size(); i++){
+		x = listaSimb[i];
 		cout<< "\t nome: " << x.nome << " "<< "val: "<< x.val << " " <<" tipo: " << x.tipo << '-' << x.endereco << endl;
 	}
 }
@@ -536,23 +555,36 @@ tabelaSimbolos buscarSimbolos(string nome){
 	x.nome = "";
 	x.tipo = "";
 	x.endereco = "";
-	int i;
-	for(i = 0; i< qtd_simb; i++){
-		if(nome.compare(Listageral[i].nome) == 0){
-			//printf("Achei");
-			x = Listageral[i];	
-			return x;
+	int i, j,cont;
+
+	cont = qtd_tabelas-1;
+	for(i = cont; i>=0; i--){
+		for(j=0; j<listaEscopo[i].size(); j++){
+			if(nome.compare(listaEscopo[i][j].nome) == 0){
+				printf("Achei ");
+				x = listaEscopo[i][j];
+				cout<< x.endereco<< endl;	
+				
+				return x;
+			}
 		}
 	}
 	return x;
 }
 void alterarSimbolos(tabelaSimbolos x){
-	int i;
-	for(i = 0; i< qtd_simb; i++){
-		if(x.nome.compare(Listageral[i].nome) == 0){
-			Listageral[i] = x;
+	int i, j, k, cont;
+	cont = qtd_tabelas-1;
+	for(i = cont; i >=0; i--){
+		for(j = 0; j<listaEscopo[i].size(); j++){
+			if(x.nome.compare(listaEscopo[i][j].nome) == 0){
+				listaEscopo[i].insert(listaEscopo[i].begin()+i, x);
+				k += i;
+				listaEscopo[i].erase(listaEscopo[i].begin() + k);
+			}
 		}
+	
 	}
+	//cout <<"alterou:" << listaSimb.size() <<endl;
 }
 bool verificarsimbolos(string nome){
 	tabelaSimbolos x; 
@@ -566,6 +598,7 @@ bool verificarsimbolos(string nome){
 }
 tabelaSimbolos inserirSimbolos(string nome, string tipo, string classe){
 	tabelaSimbolos var; 
+	int cont;
 	bool v;
 
 	v = verificarsimbolos(nome);
@@ -580,8 +613,11 @@ tabelaSimbolos inserirSimbolos(string nome, string tipo, string classe){
 	var.val = "";
 	var.endereco = gentempcode(tipo);
 	
-	//cout << var.nome << ' ' << var.tipo << ' ' << var.endereco <<endl;
-	Listageral[qtd_simb] = var;
+	cont = qtd_tabelas-1;
+	cout << var.nome << ' ' << var.tipo << ' ' << var.endereco <<endl;
+	cout << cont << endl;
+	listaEscopo[cont].push_back(var);
+	cout << "inseriu: " << listaEscopo[cont].size() <<endl;
 	qtd_simb++;
 
 	return var;
@@ -593,6 +629,8 @@ int main(int argc, char* argv[])
 	int i;
 	var_temp_qnt = 0;
 	qtd_simb = 0;
+	qtd_tabelas = 1;
+	listaEscopo.push_back(listaSimb);
 
 	yyparse();
 	return 0;

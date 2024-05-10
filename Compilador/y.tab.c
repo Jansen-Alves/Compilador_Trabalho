@@ -72,6 +72,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <vector>
 #define bool int
 #define TRUE 1
 #define FALSE 0
@@ -82,6 +83,7 @@ using namespace std;
 int var_temp_qnt;
 string Tipagens;
 int qtd_simb;
+int qtd_tabelas;
 
 struct tabelaSimbolos{
 	string nome;
@@ -99,6 +101,12 @@ struct atributos
 	string val;
 };
 
+std::vector <atributos> listaattr;
+std::vector <tabelaSimbolos> listaSimb;
+std::vector<vector<tabelaSimbolos>>listaEscopo;
+
+
+
 int yylex(void);
 void yyerror(string);
 string gentempcode(string tipo);
@@ -109,12 +117,14 @@ void checarlista();
 void tipagem();
 tabelaSimbolos buscarSimbolos(string nome);
 
+
 bool traducao(string op);
 
 tabelaSimbolos Listageral[20];
 atributos Listaatributos[50];
 
-#line 118 "y.tab.c"
+
+#line 128 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -668,9 +678,9 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    70,    70,    96,   102,   107,   112,   116,   119,   123,
-     127,   131,   137,   152,   169,   185,   204,   223,   273,   324,
-     375,   415,   434,   444,   452,   460,   467,   482
+       0,    80,    80,   109,   120,   125,   130,   134,   137,   141,
+     145,   149,   155,   170,   187,   203,   222,   241,   291,   342,
+     393,   433,   453,   463,   471,   479,   486,   501
 };
 #endif
 
@@ -1268,7 +1278,7 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* S: TK_TIPO_INT TK_MAIN '(' ')' BLOCO  */
-#line 71 "sintaticoDebug.y"
+#line 81 "sintaticoDebug.y"
                         {
 				int i;
 				string codigo = "/*Compilador FOCA*/\n"
@@ -1279,8 +1289,8 @@ yyreduce:
 								"#define FALSE 0\n"
 								"#define bool int\n"
 								"int main(void) {\n";	
-				for(i=1; i<=var_temp_qnt; i++){
-					codigo += "\t" + Listaatributos[i].tipo +" "+ Listaatributos[i].label + ";\n";
+				for(i = 0 ; i < listaattr.size(); i++){
+					codigo += "\t" + listaattr[i].tipo +" "+ listaattr[i].label + ";\n";
 				};
 				codigo+= "\n";
 				codigo += yyvsp[0].traducao;
@@ -1289,85 +1299,93 @@ yyreduce:
 							"\n}";
 				
 				cout << codigo << endl;
-				//checarlista();
+				checarlista();
+				listaattr.clear();
+				listaSimb.clear();
+				listaEscopo.clear();
 			}
-#line 1295 "y.tab.c"
+#line 1308 "y.tab.c"
     break;
 
   case 3: /* BLOCO: '{' COMANDOS '}'  */
-#line 97 "sintaticoDebug.y"
+#line 110 "sintaticoDebug.y"
                         {
+				cout<< "alou" << endl;
+				/*std::vector<tabelaSimbolos>v1;
+				listaEscopo.push_back(v1);
+				qtd_tabelas++;
+				cout << "quantidade de escopo: "<<  qtd_tabelas << endl;*/
 				yyval.traducao = yyvsp[-1].traducao;
 			}
-#line 1303 "y.tab.c"
+#line 1321 "y.tab.c"
     break;
 
   case 4: /* COMANDOS: COMANDO COMANDOS  */
-#line 103 "sintaticoDebug.y"
+#line 121 "sintaticoDebug.y"
                         {
 				yyval.traducao = yyvsp[-1].traducao + yyvsp[0].traducao;
 			}
-#line 1311 "y.tab.c"
+#line 1329 "y.tab.c"
     break;
 
   case 5: /* COMANDOS: %empty  */
-#line 107 "sintaticoDebug.y"
+#line 125 "sintaticoDebug.y"
                         {
 				yyval.traducao = "";
 			}
-#line 1319 "y.tab.c"
+#line 1337 "y.tab.c"
     break;
 
   case 6: /* COMANDO: EXP ';'  */
-#line 113 "sintaticoDebug.y"
+#line 131 "sintaticoDebug.y"
                         {
 				yyval = yyvsp[-1];
 			}
-#line 1327 "y.tab.c"
+#line 1345 "y.tab.c"
     break;
 
   case 7: /* COMANDO: CONTROLES  */
-#line 116 "sintaticoDebug.y"
+#line 134 "sintaticoDebug.y"
                                    {
 				yyval = yyvsp[0];
 			}
-#line 1335 "y.tab.c"
+#line 1353 "y.tab.c"
     break;
 
   case 8: /* COMANDO: TK_TIPO_INT TK_ID ';'  */
-#line 120 "sintaticoDebug.y"
+#line 138 "sintaticoDebug.y"
                         {
 				inserirSimbolos(yyvsp[-1].label, "int", "Number");
 			}
-#line 1343 "y.tab.c"
+#line 1361 "y.tab.c"
     break;
 
   case 9: /* COMANDO: TK_TIPO_FLOAT TK_ID ';'  */
-#line 124 "sintaticoDebug.y"
+#line 142 "sintaticoDebug.y"
                         {
 				inserirSimbolos(yyvsp[-1].label, "float", "Number");
 			}
-#line 1351 "y.tab.c"
+#line 1369 "y.tab.c"
     break;
 
   case 10: /* COMANDO: TK_TIPO_CHAR TK_ID ';'  */
-#line 128 "sintaticoDebug.y"
+#line 146 "sintaticoDebug.y"
                         {
 				inserirSimbolos(yyvsp[-1].label, "char", "Character");
 			}
-#line 1359 "y.tab.c"
+#line 1377 "y.tab.c"
     break;
 
   case 11: /* COMANDO: TK_TIPO_BOOL TK_ID ';'  */
-#line 132 "sintaticoDebug.y"
+#line 150 "sintaticoDebug.y"
                         {
 				inserirSimbolos(yyvsp[-1].label, "bool", "Boolean");
 			}
-#line 1367 "y.tab.c"
+#line 1385 "y.tab.c"
     break;
 
   case 12: /* CONTROLES: TK_IF EXP BLOCO  */
-#line 138 "sintaticoDebug.y"
+#line 156 "sintaticoDebug.y"
                         {
 				string jp;
 				atributos tst;
@@ -1382,11 +1400,11 @@ yyreduce:
 
 
 			}
-#line 1386 "y.tab.c"
+#line 1404 "y.tab.c"
     break;
 
   case 13: /* CONTROLES: TK_IF EXP BLOCO TK_ELSE BLOCO  */
-#line 153 "sintaticoDebug.y"
+#line 171 "sintaticoDebug.y"
                         {
 				string jp, finif;
 				atributos tst;
@@ -1402,11 +1420,11 @@ yyreduce:
 				yyval.traducao = jp + yyvsp[-2].traducao + tfin.traducao +"\tIF-"+ tst.label +";\n" +  yyvsp[0].traducao +"\tElse-" + tfin.label +";\n";
 
 			}
-#line 1406 "y.tab.c"
+#line 1424 "y.tab.c"
     break;
 
   case 14: /* EXP: EXP '+' EXP  */
-#line 170 "sintaticoDebug.y"
+#line 188 "sintaticoDebug.y"
                         {
 				int r1;
 				float r2;
@@ -1422,11 +1440,11 @@ yyreduce:
 						" = " + yyvsp[-2].label + " + " + yyvsp[0].label + "(chegou aqui +) ;\n";
 				cout << "tocou folha +" << yyval.val << endl;
 			}
-#line 1426 "y.tab.c"
+#line 1444 "y.tab.c"
     break;
 
   case 15: /* EXP: EXP '-' EXP  */
-#line 186 "sintaticoDebug.y"
+#line 204 "sintaticoDebug.y"
                         {
 				int r1;
 				float r2;
@@ -1445,11 +1463,11 @@ yyreduce:
 				
 				cout << "tocou folha -" << yyval.val << endl;
 			}
-#line 1449 "y.tab.c"
+#line 1467 "y.tab.c"
     break;
 
   case 16: /* EXP: EXP '*' EXP  */
-#line 205 "sintaticoDebug.y"
+#line 223 "sintaticoDebug.y"
                         {
 				int r1;
 				float r2;
@@ -1468,11 +1486,11 @@ yyreduce:
 				
 				cout << "tocou folha *" << yyval.val << endl;
 			}
-#line 1472 "y.tab.c"
+#line 1490 "y.tab.c"
     break;
 
   case 17: /* EXP: EXP '/' EXP  */
-#line 224 "sintaticoDebug.y"
+#line 242 "sintaticoDebug.y"
                         {
 				int r1;
 				float r2;
@@ -1522,11 +1540,11 @@ yyreduce:
 				}
 				
 			}
-#line 1526 "y.tab.c"
+#line 1544 "y.tab.c"
     break;
 
   case 18: /* EXP: EXP '%' EXP  */
-#line 274 "sintaticoDebug.y"
+#line 292 "sintaticoDebug.y"
                         {
 				int r1;
 				float r2;
@@ -1577,11 +1595,11 @@ yyreduce:
 				}
 				
 			}
-#line 1581 "y.tab.c"
+#line 1599 "y.tab.c"
     break;
 
   case 19: /* EXP: EXP '^' EXP  */
-#line 325 "sintaticoDebug.y"
+#line 343 "sintaticoDebug.y"
                         {
 				int r1;
 				float r2;
@@ -1632,11 +1650,11 @@ yyreduce:
 				}
 				
 			}
-#line 1636 "y.tab.c"
+#line 1654 "y.tab.c"
     break;
 
   case 20: /* EXP: EXP TK_MAIOR EXP  */
-#line 376 "sintaticoDebug.y"
+#line 394 "sintaticoDebug.y"
                         {
 				bool x;
 				atributos conv; 
@@ -1675,15 +1693,16 @@ yyreduce:
 						" = " + yyvsp[-2].label + " > " + yyvsp[0].label + ";\n";
 				}
 			}
-#line 1679 "y.tab.c"
+#line 1697 "y.tab.c"
     break;
 
   case 21: /* EXP: TK_ID '=' EXP  */
-#line 416 "sintaticoDebug.y"
+#line 434 "sintaticoDebug.y"
                         {
 				tabelaSimbolos flag;
 				flag = buscarSimbolos(yyvsp[-2].label);
 				if(flag.endereco.compare("") == 0){
+					cout<< "variavel não encontrada" << endl;
 					flag = inserirSimbolos(yyvsp[-2].label, yyvsp[0].tipo, yyvsp[0].classe);
 				}else if(flag.tipo.compare(yyvsp[0].tipo) != 0){
 					//checarlista();
@@ -1698,11 +1717,11 @@ yyreduce:
 				//cout << flag.nome << endl;
 				yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + yyval.label + " = " + yyvsp[0].label + ";\n";
 			}
-#line 1702 "y.tab.c"
+#line 1721 "y.tab.c"
     break;
 
   case 22: /* EXP: TK_NUM  */
-#line 435 "sintaticoDebug.y"
+#line 454 "sintaticoDebug.y"
                         {
 				yyval.label = gentempcode("int");
 				yyval.tipo = "int";
@@ -1712,11 +1731,11 @@ yyreduce:
 
 				
 			}
-#line 1716 "y.tab.c"
+#line 1735 "y.tab.c"
     break;
 
   case 23: /* EXP: TK_REAL  */
-#line 445 "sintaticoDebug.y"
+#line 464 "sintaticoDebug.y"
                         {
 				yyval.label = gentempcode("float");
 				yyval.tipo = "float";
@@ -1724,11 +1743,11 @@ yyreduce:
 				yyval.val = yyvsp[0].label;
 				yyval.traducao = "\t" + yyval.label + " = " + yyvsp[0].label + ";\n";
 			}
-#line 1728 "y.tab.c"
+#line 1747 "y.tab.c"
     break;
 
   case 24: /* EXP: TK_CHAR  */
-#line 453 "sintaticoDebug.y"
+#line 472 "sintaticoDebug.y"
                         {
 				yyval.label = gentempcode("char");
 				yyval.tipo = "char";
@@ -1736,11 +1755,11 @@ yyreduce:
 				yyval.val = yyvsp[0].label;
 				yyval.traducao = "\t" + yyval.label + " = " + yyvsp[0].label + ";\n";
 			}
-#line 1740 "y.tab.c"
+#line 1759 "y.tab.c"
     break;
 
   case 25: /* EXP: TK_BOOL  */
-#line 460 "sintaticoDebug.y"
+#line 479 "sintaticoDebug.y"
                                 {
 				yyval.label = gentempcode("bool");
 				yyval.tipo = "bool";
@@ -1748,11 +1767,11 @@ yyreduce:
 				yyval.val = yyvsp[0].label;
 				yyval.traducao = "\t" + yyval.label + " = " + yyvsp[0].label +";\n";
 			}
-#line 1752 "y.tab.c"
+#line 1771 "y.tab.c"
     break;
 
   case 26: /* EXP: TK_ID  */
-#line 468 "sintaticoDebug.y"
+#line 487 "sintaticoDebug.y"
                         {
 				tabelaSimbolos flag;
 				flag = buscarSimbolos(yyvsp[0].label);
@@ -1767,21 +1786,21 @@ yyreduce:
 				//cout << "Variavel atribuida " << $$.val << endl;
 
 			}
-#line 1771 "y.tab.c"
+#line 1790 "y.tab.c"
     break;
 
   case 27: /* EXP: TK_CONV  */
-#line 483 "sintaticoDebug.y"
+#line 502 "sintaticoDebug.y"
                         {
 				yyval.label = gentempcode("char");
 				yyval.val = yyvsp[0].label;
 				//cout << $$.val << endl;
 			}
-#line 1781 "y.tab.c"
+#line 1800 "y.tab.c"
     break;
 
 
-#line 1785 "y.tab.c"
+#line 1804 "y.tab.c"
 
       default: break;
     }
@@ -1974,7 +1993,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 490 "sintaticoDebug.y"
+#line 509 "sintaticoDebug.y"
 
 
 #include "lex.yy.c"
@@ -1988,7 +2007,7 @@ string gentempcode(string tipo)
 	x.label = "t" + to_string(var_temp_qnt);
 	x.tipo = tipo;
 
-	Listaatributos[var_temp_qnt] = x;
+	listaattr.push_back(x);
 	return "t" + to_string(var_temp_qnt);
 }
 using namespace std;
@@ -2014,8 +2033,8 @@ void checarlista(){
 	int i;
 	tabelaSimbolos x;
 
-	for(i=0; i<qtd_simb; i++){
-		x = Listageral[i];
+	for(i=0; i<listaSimb.size(); i++){
+		x = listaSimb[i];
 		cout<< "\t nome: " << x.nome << " "<< "val: "<< x.val << " " <<" tipo: " << x.tipo << '-' << x.endereco << endl;
 	}
 }
@@ -2024,23 +2043,36 @@ tabelaSimbolos buscarSimbolos(string nome){
 	x.nome = "";
 	x.tipo = "";
 	x.endereco = "";
-	int i;
-	for(i = 0; i< qtd_simb; i++){
-		if(nome.compare(Listageral[i].nome) == 0){
-			//printf("Achei");
-			x = Listageral[i];	
-			return x;
+	int i, j,cont;
+
+	cont = qtd_tabelas-1;
+	for(i = cont; i>=0; i--){
+		for(j=0; j<listaEscopo[i].size(); j++){
+			if(nome.compare(listaEscopo[i][j].nome) == 0){
+				printf("Achei ");
+				x = listaEscopo[i][j];
+				cout<< x.endereco<< endl;	
+				
+				return x;
+			}
 		}
 	}
 	return x;
 }
 void alterarSimbolos(tabelaSimbolos x){
-	int i;
-	for(i = 0; i< qtd_simb; i++){
-		if(x.nome.compare(Listageral[i].nome) == 0){
-			Listageral[i] = x;
+	int i, j, k, cont;
+	cont = qtd_tabelas-1;
+	for(i = cont; i >=0; i--){
+		for(j = 0; j<listaEscopo[i].size(); j++){
+			if(x.nome.compare(listaEscopo[i][j].nome) == 0){
+				listaEscopo[i].insert(listaEscopo[i].begin()+i, x);
+				k += i;
+				listaEscopo[i].erase(listaEscopo[i].begin() + k);
+			}
 		}
+	
 	}
+	//cout <<"alterou:" << listaSimb.size() <<endl;
 }
 bool verificarsimbolos(string nome){
 	tabelaSimbolos x; 
@@ -2054,6 +2086,7 @@ bool verificarsimbolos(string nome){
 }
 tabelaSimbolos inserirSimbolos(string nome, string tipo, string classe){
 	tabelaSimbolos var; 
+	int cont;
 	bool v;
 
 	v = verificarsimbolos(nome);
@@ -2068,8 +2101,11 @@ tabelaSimbolos inserirSimbolos(string nome, string tipo, string classe){
 	var.val = "";
 	var.endereco = gentempcode(tipo);
 	
-	//cout << var.nome << ' ' << var.tipo << ' ' << var.endereco <<endl;
-	Listageral[qtd_simb] = var;
+	cont = qtd_tabelas-1;
+	cout << var.nome << ' ' << var.tipo << ' ' << var.endereco <<endl;
+	cout << cont << endl;
+	listaEscopo[cont].push_back(var);
+	cout << "inseriu" << listaEscopo.size() <<endl;
 	qtd_simb++;
 
 	return var;
@@ -2081,6 +2117,8 @@ int main(int argc, char* argv[])
 	int i;
 	var_temp_qnt = 0;
 	qtd_simb = 0;
+	qtd_tabelas = 1;
+	listaEscopo.push_back(listaSimb);
 
 	yyparse();
 	return 0;

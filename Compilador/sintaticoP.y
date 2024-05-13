@@ -45,11 +45,13 @@ tabelaSimbolos Listageral[20];
 atributos Listaatributos[50];
 %}
 
-%token TK_NUM TK_STR TK_REAL TK_CHAR TK_BOOL
+%token TK_NUM TK_STR TK_REAL TK_CHAR TK_STRING TK_BOOL
 %token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLOAT
 %token TK_TIPO_CHAR TK_TIPO_BOOL TK_CONV
 %token TK_MAIOR_IGUAL TK_MENOR_IGUAL TK_MAIOR TK_MENOR TK_IGUALDADE TK_DESIGUALDADE
 %token TK_CONJUNCAO TK_DISNJUNCAO
+%token TK_ALT
+%token TK_IF TK_ELSE TK_DO TK_WHILE TK_FOR TK_SWITCH
 %token TK_FIM TK_ERROR
 
 %start S
@@ -111,6 +113,9 @@ COMANDO 	: E ';'
 			{
 				$$ = $1;
 			}
+			|CONTROLES{
+				$$ = $1;
+			}
 			| TK_TIPO_INT TK_ID ';'
 			{
 				inserirSimbolos($2.label, "int", "Number");
@@ -128,6 +133,98 @@ COMANDO 	: E ';'
 				inserirSimbolos($2.label, "bool", "Boolean");
 			}
 			;
+CONTROLES	: TK_IF E BLOCO
+			{
+				string jp;
+				atributos tst;
+				if($2.tipo.compare("bool") != 0){
+					yyerror("Expressão incompativel para a operação de controle");
+				}
+				tst.label = gentempcode("bool");
+				tst.traducao = "\t"+tst.label + " = " +"!"+ $2.label+";\n";
+				jp = $2.traducao + tst.traducao+"\tif("+ tst.label+") go to IF-"+tst.label+";\n";
+
+				$$.traducao = jp + $3.traducao +"\tIF-"+ tst.label + ";\n";
+
+
+			}
+			|TK_IF E  BLOCO TK_ELSE BLOCO
+			{
+				string jp, finif;
+				atributos tst;
+				atributos tfin;
+				if($2.tipo.compare("bool") != 0){
+					yyerror("Expressão incompativel para a operação de controle");
+				}
+				tst.label = gentempcode("bool");
+				tst.traducao = "\t"+tst.label + " = " +"!"+ $2.label+";\n";
+				jp = $2.traducao + tst.traducao+"\tif("+ tst.label+") go to IF-"+tst.label+";\n";
+				tfin.label = gentempcode("bool");
+				tfin.traducao = "\tgo to Else-" + tfin.label +";\n";
+				$$.traducao = jp + $3.traducao + tfin.traducao +"\tIF-"+ tst.label +";\n" +  $5.traducao +"\tElse-" + tfin.label +";\n";
+
+			}
+			|TK_WHILE E BLOCO
+			{
+				string jp, ciclowhile, iniwhile;
+				atributos tst;
+				if($2.tipo.compare("bool") != 0){
+					yyerror("Expressão incompativel para a operação de controle");
+				}
+				tst.label = gentempcode("bool");
+				iniwhile = "\tinicio_"+tst.label +";\n";
+
+				tst.traducao = "\t"+tst.label + " = " +"!"+ $2.label+";\n";
+				jp = iniwhile +$2.traducao + tst.traducao+"\tif("+ tst.label+") go to FIM "+tst.label+";\n";
+				ciclowhile = "\tgo to inicio_"+tst.label +";\n";
+				$$.traducao = jp + $3.traducao + ciclowhile + "\tFIM "+tst.label+";\n";
+
+			}
+			|TK_DO BLOCO TK_WHILE E ';'
+			{
+				string jp, ciclowhile, iniwhile;
+				atributos tst;
+				if($4.tipo.compare("bool") != 0){
+					yyerror("Expressão incompativel para a operação de controle");
+				}
+				tst.label = gentempcode("bool");
+				iniwhile = "\tinicio_"+tst.label +";\n";
+
+				tst.traducao = "\t"+tst.label + " = " +"!"+ $4.label+";\n";
+				jp = iniwhile +$2.traducao + $4.traducao + tst.traducao+"\tif("+ tst.label+") go to FIM "+tst.label+";\n";
+				ciclowhile = "\tgo to inicio_"+tst.label +";\n";
+				$$.traducao = jp + ciclowhile + "\tFIM "+tst.label+";\n";
+
+			}
+			|TK_FOR '(' TK_ID '=' E ';' E ';' E')' BLOCO
+			{
+				/*string jp, E1;
+				atributos tst, vari;
+				if($7.tipo.compare("bool") != 0){
+					yyerror("Expressão incompativel para a operação de controle");
+				}
+				tabelaSimbolos flag;
+				flag = buscarSimbolos($3.label);
+				if(flag.endereco.compare("") == 0){
+					flag = inserirSimbolos($3.label, $5.tipo, $5.classe);
+				}else if(flag.tipo.compare($5.tipo) != 0){
+					//checarlista();
+					yyerror("Atribuição incorreta, tipo de variavel incompativel");
+					
+				}
+				vari.label = flag.
+				flag.val = vari.val;
+				alterarSimbolos(flag);
+				//cout << flag.nome << endl;
+				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + " = " + $3.label + ";\n";
+				tst.label = gentempcode("bool");
+				iniwhile = "\tinicio_"+tst.label +";\n";
+
+				tst.traducao = "\t"+tst.label + " = " +"!"+ $4.label+";\n";
+				jp = iniwhile +$2.traducao + $4.traducao + tst.traducao+"\tif("+ tst.label+") go to FIM "+tst.label+";\n";
+				ciclowhile = "\tgo to inicio_"+tst.label +";\n";
+				$$.traducao = jp + ciclowhile + "\tFIM "+tst.label+";\n";*/
+			};
 
 E 			: E '+' E
 			{
@@ -735,6 +832,20 @@ E 			: E '+' E
 				$$.traducao = $2.traducao + "\t" + $$.label + 
 						" = " +"!"+ $2.label +"("+ $$.val+ ")"+ ";\n";
 			}
+			| E TK_ALT
+			{
+				string x;
+				if($1.classe.compare("Number") != 0){
+					yyerror("Tipo incompativeis para essa operação");
+				}
+				$$.label = gentempcode($1.tipo);
+				$$.tipo = $1.tipo;
+				$$.classe = $1.classe;
+
+				$1.tipo.compare("int") == 0 ?  x = "1" : x = "1.0000";
+				$$.traducao = $1.traducao + "\t" + $$.label + " = " + $1.label + " "+ $2.label[0] + " "+ x +";\n";
+				
+			}
 			| '(' TK_TIPO_INT ')' E
 			{
 				int conv;
@@ -769,6 +880,7 @@ E 			: E '+' E
 			| TK_ID '=' E
 			{
 				tabelaSimbolos flag;
+
 				flag = buscarSimbolos($1.label);
 				if(flag.endereco.compare("") == 0){
 					flag = inserirSimbolos($1.label, $3.tipo, $3.classe);
@@ -783,7 +895,11 @@ E 			: E '+' E
 				flag.val = $$.val;
 				alterarSimbolos(flag);
 				//cout << flag.nome << endl;
+				if($3.tipo.compare("string") != 0){
 				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + " = " + $3.label + ";\n";
+				}else{
+					$$.traducao = $1.traducao + $3.traducao + "\t"+ "strcpy(" + $$.label + ","+ $3.label + ");\n";
+				}
 			}
 			| TK_NUM
 			{
@@ -818,7 +934,16 @@ E 			: E '+' E
 				$$.val = $1.label;
 				$$.traducao = "\t" + $$.label + " = " + $1.label +";\n";
 			}
-			| TK_ID
+			|TK_STRING
+			{
+				cout << $1.label << endl;
+				$$.label = gentempcode("string");
+				$$.tipo = "string";
+				$$.classe = "String";
+				$$.val = $1.label;
+				$$.traducao = "\t" + $$.label + " = " + $1.label +";\n";
+			}
+			|TK_ID
 			{
 				tabelaSimbolos flag;
 				flag = buscarSimbolos($1.label);

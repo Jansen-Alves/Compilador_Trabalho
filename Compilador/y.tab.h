@@ -58,26 +58,32 @@ extern int yydebug;
     TK_STR = 259,                  /* TK_STR  */
     TK_REAL = 260,                 /* TK_REAL  */
     TK_CHAR = 261,                 /* TK_CHAR  */
-    TK_BOOL = 262,                 /* TK_BOOL  */
-    TK_MAIN = 263,                 /* TK_MAIN  */
-    TK_ID = 264,                   /* TK_ID  */
-    TK_TIPO_INT = 265,             /* TK_TIPO_INT  */
-    TK_TIPO_FLOAT = 266,           /* TK_TIPO_FLOAT  */
-    TK_TIPO_CHAR = 267,            /* TK_TIPO_CHAR  */
-    TK_TIPO_BOOL = 268,            /* TK_TIPO_BOOL  */
-    TK_CONV = 269,                 /* TK_CONV  */
-    TK_MAIOR_IGUAL = 270,          /* TK_MAIOR_IGUAL  */
-    TK_MENOR_IGUAL = 271,          /* TK_MENOR_IGUAL  */
-    TK_MAIOR = 272,                /* TK_MAIOR  */
-    TK_MENOR = 273,                /* TK_MENOR  */
-    TK_IGUALDADE = 274,            /* TK_IGUALDADE  */
-    TK_DESIGUALDADE = 275,         /* TK_DESIGUALDADE  */
-    TK_CONJUNCAO = 276,            /* TK_CONJUNCAO  */
-    TK_DISNJUNCAO = 277,           /* TK_DISNJUNCAO  */
-    TK_IF = 278,                   /* TK_IF  */
-    TK_ELSE = 279,                 /* TK_ELSE  */
-    TK_FIM = 280,                  /* TK_FIM  */
-    TK_ERROR = 281                 /* TK_ERROR  */
+    TK_STRING = 262,               /* TK_STRING  */
+    TK_BOOL = 263,                 /* TK_BOOL  */
+    TK_MAIN = 264,                 /* TK_MAIN  */
+    TK_ID = 265,                   /* TK_ID  */
+    TK_TIPO_INT = 266,             /* TK_TIPO_INT  */
+    TK_TIPO_FLOAT = 267,           /* TK_TIPO_FLOAT  */
+    TK_TIPO_CHAR = 268,            /* TK_TIPO_CHAR  */
+    TK_TIPO_BOOL = 269,            /* TK_TIPO_BOOL  */
+    TK_CONV = 270,                 /* TK_CONV  */
+    TK_MAIOR_IGUAL = 271,          /* TK_MAIOR_IGUAL  */
+    TK_MENOR_IGUAL = 272,          /* TK_MENOR_IGUAL  */
+    TK_MAIOR = 273,                /* TK_MAIOR  */
+    TK_MENOR = 274,                /* TK_MENOR  */
+    TK_IGUALDADE = 275,            /* TK_IGUALDADE  */
+    TK_DESIGUALDADE = 276,         /* TK_DESIGUALDADE  */
+    TK_CONJUNCAO = 277,            /* TK_CONJUNCAO  */
+    TK_DISNJUNCAO = 278,           /* TK_DISNJUNCAO  */
+    TK_ALT = 279,                  /* TK_ALT  */
+    TK_IF = 280,                   /* TK_IF  */
+    TK_ELSE = 281,                 /* TK_ELSE  */
+    TK_DO = 282,                   /* TK_DO  */
+    TK_WHILE = 283,                /* TK_WHILE  */
+    TK_FOR = 284,                  /* TK_FOR  */
+    TK_SWITCH = 285,               /* TK_SWITCH  */
+    TK_FIM = 286,                  /* TK_FIM  */
+    TK_ERROR = 287                 /* TK_ERROR  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -90,26 +96,32 @@ extern int yydebug;
 #define TK_STR 259
 #define TK_REAL 260
 #define TK_CHAR 261
-#define TK_BOOL 262
-#define TK_MAIN 263
-#define TK_ID 264
-#define TK_TIPO_INT 265
-#define TK_TIPO_FLOAT 266
-#define TK_TIPO_CHAR 267
-#define TK_TIPO_BOOL 268
-#define TK_CONV 269
-#define TK_MAIOR_IGUAL 270
-#define TK_MENOR_IGUAL 271
-#define TK_MAIOR 272
-#define TK_MENOR 273
-#define TK_IGUALDADE 274
-#define TK_DESIGUALDADE 275
-#define TK_CONJUNCAO 276
-#define TK_DISNJUNCAO 277
-#define TK_IF 278
-#define TK_ELSE 279
-#define TK_FIM 280
-#define TK_ERROR 281
+#define TK_STRING 262
+#define TK_BOOL 263
+#define TK_MAIN 264
+#define TK_ID 265
+#define TK_TIPO_INT 266
+#define TK_TIPO_FLOAT 267
+#define TK_TIPO_CHAR 268
+#define TK_TIPO_BOOL 269
+#define TK_CONV 270
+#define TK_MAIOR_IGUAL 271
+#define TK_MENOR_IGUAL 272
+#define TK_MAIOR 273
+#define TK_MENOR 274
+#define TK_IGUALDADE 275
+#define TK_DESIGUALDADE 276
+#define TK_CONJUNCAO 277
+#define TK_DISNJUNCAO 278
+#define TK_ALT 279
+#define TK_IF 280
+#define TK_ELSE 281
+#define TK_DO 282
+#define TK_WHILE 283
+#define TK_FOR 284
+#define TK_SWITCH 285
+#define TK_FIM 286
+#define TK_ERROR 287
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

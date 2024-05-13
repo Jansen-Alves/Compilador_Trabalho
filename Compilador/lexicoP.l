@@ -11,8 +11,9 @@ DELIM {ESPACO}+
 NUM {DIGITO}+
 REAL {NUM}+("."{NUM}+)?
 CHAR \'({LETRA}|{NUM})\'
+STRING \"({LETRA}({LETRA}|{DELIM})*)\"
 VARI {LETRA}({LETRA}|{NUM})*
-
+ALT ("++"|"--")
 %%
 
 "\n"		{}
@@ -53,6 +54,12 @@ VARI {LETRA}({LETRA}|{NUM})*
 
 "else"      {yylval.label = yytext; return TK_ELSE;}
 
+"do"        {yylval.label = yytext; return TK_DO;}
+
+"while"     {yylval.label = yytext; return TK_WHILE;}
+
+"for"       {yylval.label = yytext; return TK_FOR;}
+
 [(){}[\];,]	{ return *yytext; }
 
 [+\-*/!%^]		{ return *yytext; }
@@ -66,6 +73,10 @@ VARI {LETRA}({LETRA}|{NUM})*
 {REAL}      { yylval.label = yytext; return TK_REAL;}
 
 {CHAR}      {yylval.label = yytext; return TK_CHAR;}
+
+{STRING}    {yylval.label = yytext; return TK_STRING;}
+
+{ALT}       {yylval.label = yytext; return TK_ALT;}
 
 {VARI}		{ yylval.label = yytext; return TK_ID; }
 

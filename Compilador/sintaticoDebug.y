@@ -60,7 +60,7 @@ atributos Listaatributos[50];
 %token TK_TIPO_CHAR TK_TIPO_BOOL TK_CONV
 %token TK_MAIOR_IGUAL TK_MENOR_IGUAL TK_MAIOR TK_MENOR TK_IGUALDADE TK_DESIGUALDADE
 %token TK_CONJUNCAO TK_DISNJUNCAO
-%token TK_IF TK_ELSE
+%token TK_IF TK_ELSE TK_WHILE
 %token TK_FIM TK_ERROR
 
 %start S
@@ -120,6 +120,7 @@ BLOCO		: '{' COMANDOS '}'
 COMANDOS	: COMANDO COMANDOS
 			{
 				$$.traducao = $1.traducao + $2.traducao;
+				
 			}
 			|
 			{
@@ -181,6 +182,21 @@ CONTROLES	: TK_IF EXP BLOCO
 				tfin.label = gentempcode("bool");
 				tfin.traducao = "\tgo to Else-" + tfin.label +";\n";
 				$$.traducao = jp + $3.traducao + tfin.traducao +"\tIF-"+ tst.label +";\n" +  $5.traducao +"\tElse-" + tfin.label +";\n";
+
+			}
+			|TK_WHILE EXP BLOCO
+			{
+				string jp, ciclowhile, iniwhile;
+				atributos tst;
+				if($2.tipo.compare("bool") != 0){
+					yyerror("Expressão incompativel para a operação de controle");
+				}
+				tst.label = gentempcode("bool");
+				tst.traducao = "\t"+tst.label + " = " +"!"+ $2.label+";\n";
+				iniwhile = "\tinicio_"+tst.label+";\n" ;
+				jp = $2.traducao + iniwhile + tst.traducao+"\tif("+ tst.label+") go to FIM "+tst.label+";\n";
+				ciclowhile = "\tgo to inicio_"+tst.label;
+				$$.traducao = jp + $3.traducao + ciclowhile + "\t FIM "+tst.label+";\n";
 
 			};
 
@@ -558,16 +574,15 @@ tabelaSimbolos buscarSimbolos(string nome){
 	int i, j,cont;
 
 	cont = qtd_tabelas-1;
-	for(i = cont; i>=0; i--){
-		for(j=0; j<listaEscopo[i].size(); j++){
-			if(nome.compare(listaEscopo[i][j].nome) == 0){
+	for(i = 0; i < listaSimb.size(); i){
+		
+			if(nome.compare(listaSimb[i].nome) == 0){
 				printf("Achei ");
-				x = listaEscopo[i][j];
+				x = listaSimb[i];
 				cout<< x.endereco<< endl;	
 				
 				return x;
 			}
-		}
 	}
 	return x;
 }
@@ -616,7 +631,7 @@ tabelaSimbolos inserirSimbolos(string nome, string tipo, string classe){
 	cont = qtd_tabelas-1;
 	cout << var.nome << ' ' << var.tipo << ' ' << var.endereco <<endl;
 	cout << cont << endl;
-	listaEscopo[cont].push_back(var);
+	listaSimb.push_back(var);
 	cout << "inseriu: " << listaEscopo[cont].size() <<endl;
 	qtd_simb++;
 

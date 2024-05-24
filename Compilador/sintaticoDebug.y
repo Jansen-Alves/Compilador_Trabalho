@@ -6,6 +6,8 @@
 #define bool int
 #define TRUE 1
 #define FALSE 0
+#define LACO 1
+#define BLOCO 0
 #define YYSTYPE atributos
 
 using namespace std;
@@ -14,6 +16,12 @@ int var_temp_qnt;
 string Tipagens;
 int qtd_simb;
 int qtd_tabelas;
+int qtd_laco;
+
+struct escopo{
+	string label;
+	int tipo;
+};
 
 struct tabelaSimbolos{
 	string nome;
@@ -33,6 +41,7 @@ struct atributos
 
 std::vector <atributos> listaattr;
 std::vector <tabelaSimbolos> listaSimb;
+std::vector <escopo> infobloco;
 std::vector<vector<tabelaSimbolos>>listaEscopo;
 
 
@@ -40,12 +49,16 @@ std::vector<vector<tabelaSimbolos>>listaEscopo;
 int yylex(void);
 void yyerror(string);
 string gentempcode(string tipo);
+string gentemplabel();
 tabelaSimbolos inserirSimbolos(string nome, string tipo, string classe);
+tabelaSimbolos buscarSimbolos(string nome);
+escopo buscarbloco(int k);
 void alterarSimbolos(tabelaSimbolos x);
 bool verificarsimbolos(string nome);
+
 void checarlista();
 void tipagem();
-tabelaSimbolos buscarSimbolos(string nome);
+
 
 
 bool traducao(string op);
@@ -55,12 +68,13 @@ atributos Listaatributos[50];
 
 %}
 
-%token TK_NUM TK_STR TK_REAL TK_CHAR TK_BOOL
+%token TK_NUM TK_STR TK_REAL TK_CHAR TK_BOOL TK_STRING
 %token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLOAT
 %token TK_TIPO_CHAR TK_TIPO_BOOL TK_CONV
 %token TK_MAIOR_IGUAL TK_MENOR_IGUAL TK_MAIOR TK_MENOR TK_IGUALDADE TK_DESIGUALDADE
 %token TK_CONJUNCAO TK_DISNJUNCAO
-%token TK_IF TK_ELSE TK_WHILE
+%token TK_ALT
+%token TK_IF TK_ELSE TK_DO TK_WHILE TK_FOR TK_SWITCH
 %token TK_FIM TK_ERROR
 
 %start S
@@ -99,6 +113,7 @@ S 			: TK_TIPO_INT TK_MAIN '(' ')' BLOCO
 				
 				cout << codigo << endl;
 				checarlista();
+				cout << "bumbo" << endl;
 				listaattr.clear();
 				listaSimb.clear();
 				listaEscopo.clear();
@@ -106,14 +121,45 @@ S 			: TK_TIPO_INT TK_MAIN '(' ')' BLOCO
 			
 			;
 
-BLOCO		: '{' COMANDOS '}'
+BLOCO		: INIT COMANDOS '}'
 			{
-				cout<< "alou" << endl;
+				cout << listaEscopo.size();
 				/*std::vector<tabelaSimbolos>v1;
 				listaEscopo.push_back(v1);
 				qtd_tabelas++;
 				cout << "quantidade de escopo: "<<  qtd_tabelas << endl;*/
 				$$.traducao = $2.traducao;
+				listaEscopo.pop_back();
+				qtd_tabelas--;
+				cout << " tamanho final de escopo " << listaEscopo.size() << endl;
+			}
+			;
+
+INIT		: '{'
+			{
+				vector<tabelaSimbolos> v1;
+				escopo x; 
+				x.label = "";
+				x.tipo = BLOCO;
+				
+				listaEscopo.push_back(v1);
+				infobloco.push_back(x);
+				cout << " tamanho inicio de escopo " << listaEscopo.size() << endl;
+				qtd_tabelas++;
+			}
+			;
+
+INIB		: '{'
+			{
+				escopo x;
+				vector<tabelaSimbolos> v1;
+				x.label = gentemplabel();
+				x.tipo = LACO;
+
+				listaEscopo.push_back(v1);
+				infobloco.push_back(x);
+				cout<< "bloco laço, tamanho pilha "<< listaEscopo.size() << endl;
+				qtd_tabelas++;
 			}
 			;
 
@@ -155,22 +201,23 @@ COMANDO 	: EXP ';'
 
 CONTROLES	: TK_IF EXP BLOCO
 			{
-				string jp;
+				string jp, marco;
 				atributos tst;
 				if($2.tipo.compare("bool") != 0){
 					yyerror("Expressão incompativel para a operação de controle");
 				}
 				tst.label = gentempcode("bool");
 				tst.traducao = "\t"+tst.label + " = " +"!"+ $2.label+";\n";
-				jp = $2.traducao + tst.traducao+"\tif("+ tst.label+") go to IF-"+tst.label+";\n";
+				marco = gentemplabel();
+				jp = $2.traducao + tst.traducao+"\tif("+ tst.label+") go to IF-"+marco+";\n";
 
-				$$.traducao = jp + $3.traducao +"\tIF-"+ tst.label + ";\n";
+				$$.traducao = jp + $3.traducao +"\tIF-"+ marco + ";\n";
 
 
 			}
 			|TK_IF EXP  BLOCO TK_ELSE BLOCO
 			{
-				string jp, finif;
+				string jp, Lif, Lelse;
 				atributos tst;
 				atributos tfin;
 				if($2.tipo.compare("bool") != 0){
@@ -178,26 +225,36 @@ CONTROLES	: TK_IF EXP BLOCO
 				}
 				tst.label = gentempcode("bool");
 				tst.traducao = "\t"+tst.label + " = " +"!"+ $2.label+";\n";
-				jp = $2.traducao + tst.traducao+"\tif("+ tst.label+") go to IF-"+tst.label+";\n";
+				Lif = gentemplabel();
+				Lelse = gentemplabel();
+
+
+				jp = $2.traducao + tst.traducao+"\tif("+ tst.label+") go to IF-"+Lif+";\n";
 				tfin.label = gentempcode("bool");
-				tfin.traducao = "\tgo to Else-" + tfin.label +";\n";
-				$$.traducao = jp + $3.traducao + tfin.traducao +"\tIF-"+ tst.label +";\n" +  $5.traducao +"\tElse-" + tfin.label +";\n";
+				tfin.traducao= "\tgo to Else-" + Lelse +";\n";
+				$$.traducao = jp + $3.traducao + tfin.traducao +"\tIF-"+ Lif +";\n" + $5.traducao +"\tElse-" + Lelse +";\n";
 
 			}
-			|TK_WHILE EXP BLOCO
+			|TK_WHILE EXP INIB COMANDOS '}'
 			{
 				string jp, ciclowhile, iniwhile;
 				atributos tst;
+				escopo laco;
 				if($2.tipo.compare("bool") != 0){
 					yyerror("Expressão incompativel para a operação de controle");
 				}
 				tst.label = gentempcode("bool");
+				laco = buscarbloco(1);
 				tst.traducao = "\t"+tst.label + " = " +"!"+ $2.label+";\n";
-				iniwhile = "\tinicio_"+tst.label+";\n" ;
-				jp = $2.traducao + iniwhile + tst.traducao+"\tif("+ tst.label+") go to FIM "+tst.label+";\n";
-				ciclowhile = "\tgo to inicio_"+tst.label;
-				$$.traducao = jp + $3.traducao + ciclowhile + "\t FIM "+tst.label+";\n";
 
+				laco = buscarbloco(1);
+
+				iniwhile = "\tinicio_"+laco.label+";\n" ;
+				jp = $2.traducao + iniwhile + tst.traducao+"\tif("+ tst.label+") go to FIM "+laco.label+";\n";
+				ciclowhile = "\tgo to inicio_"+laco.label +";\n";
+				$$.traducao = jp + $4.traducao + ciclowhile + "\tFIM "+laco.label+";\n";
+				listaEscopo.pop_back();
+				cout << " tamanho final do while " << listaEscopo.size() << endl;
 			};
 
 EXP 		: EXP '+' EXP
@@ -446,25 +503,9 @@ EXP 		: EXP '+' EXP
 				}
 			}
 			
-			| TK_ID '=' EXP
+			| ATB
 			{
-				tabelaSimbolos flag;
-				flag = buscarSimbolos($1.label);
-				if(flag.endereco.compare("") == 0){
-					cout<< "variavel não encontrada" << endl;
-					flag = inserirSimbolos($1.label, $3.tipo, $3.classe);
-				}else if(flag.tipo.compare($3.tipo) != 0){
-					//checarlista();
-					yyerror("Atribuição incorreta, tipo de variavel incompativel");
-					
-				}
-				$$.label = flag.endereco;
-				$$.tipo = $3.tipo;
-				$$.val = $3.val;
-				flag.val = $$.val;
-				alterarSimbolos(flag);
-				//cout << flag.nome << endl;
-				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + " = " + $3.label + ";\n";
+				$$.traducao = $1.traducao;
 			}
 			| TK_NUM
 			{
@@ -521,13 +562,33 @@ EXP 		: EXP '+' EXP
 				//cout << $$.val << endl;
 			}
 			;
+ATB			: TK_ID '=' EXP
+			{
+				tabelaSimbolos flag;
+				flag = buscarSimbolos($1.label);
+				if(flag.endereco.compare("") == 0){
+					cout<< "variavel não encontrada: " << $1.label << endl;
+					flag = inserirSimbolos($1.label, $3.tipo, $3.classe);
+				}else if(flag.tipo.compare($3.tipo) != 0){
+					//checarlista();
+					yyerror("Atribuição incorreta, tipo de variavel incompativel");
+					
+				}
+				$$.label = flag.endereco;
+				$$.tipo = $3.tipo;
+				$$.val = $3.val;
+				flag.val = $$.val;
+				alterarSimbolos(flag);
+				//cout << flag.nome << endl;
+				$$.traducao = $1.traducao + $3.traducao + "\t" + $$.label + " = " + $3.label + ";\n";
+			};
 
 %%
 
 #include "lex.yy.c"
 
 int yyparse();
-
+using namespace std;
 string gentempcode(string tipo)
 {
 	atributos x;
@@ -538,7 +599,13 @@ string gentempcode(string tipo)
 	listaattr.push_back(x);
 	return "t" + to_string(var_temp_qnt);
 }
-using namespace std;
+string gentemplabel(){
+	string x;
+	qtd_laco++;
+	x = "P" + to_string(qtd_laco);
+
+	return x;
+}
 bool traducao(string op){
 	bool resp;
 	if(op.compare("TRUE") ==0){
@@ -558,12 +625,15 @@ void tipagem(){
 	}
 }
 void checarlista(){
-	int i;
-	tabelaSimbolos x;
+	int i, j, cont;
+	tabelaSimbolos x; 
 
-	for(i=0; i<listaSimb.size(); i++){
-		x = listaSimb[i];
-		cout<< "\t nome: " << x.nome << " "<< "val: "<< x.val << " " <<" tipo: " << x.tipo << '-' << x.endereco << endl;
+	cont = listaEscopo.size()-1;
+	for(i = cont; i >=0; i--){
+		for(j=0; j<listaEscopo[i].size(); j++){
+		x = listaEscopo[i][j];
+		cout << "\t nome: " << x.nome << " "<< "val: "<< x.val << " " <<" tipo: " << x.tipo << '-' << x.endereco << endl;
+		}
 	}
 }
 tabelaSimbolos buscarSimbolos(string nome){
@@ -573,28 +643,35 @@ tabelaSimbolos buscarSimbolos(string nome){
 	x.endereco = "";
 	int i, j,cont;
 
-	cont = qtd_tabelas-1;
-	for(i = 0; i < listaSimb.size(); i){
-		
-			if(nome.compare(listaSimb[i].nome) == 0){
+	cont = listaEscopo.size()-1;
+	cout << "acesso a busca " << cont << endl;
+	for(i = cont; i >=0; i--){
+		cout << i << " tabela" << endl;
+		for(j=0; j<listaEscopo[i].size(); j++){
+			cout << j << " simbolo " << listaEscopo[i][j].nome<< endl;
+			if(nome.compare(listaEscopo[i][j].nome) == 0){
 				printf("Achei ");
-				x = listaSimb[i];
+				x = listaEscopo[i][j];
 				cout<< x.endereco<< endl;	
 				
 				return x;
+			}
 			}
 	}
 	return x;
 }
 void alterarSimbolos(tabelaSimbolos x){
 	int i, j, k, cont;
-	cont = qtd_tabelas-1;
+	cont = listaEscopo.size()-1;
 	for(i = cont; i >=0; i--){
+		cout << "tabela" << i << endl;
 		for(j = 0; j<listaEscopo[i].size(); j++){
+			cout << j << " simbolo " << listaEscopo[i][j].nome<< endl;
 			if(x.nome.compare(listaEscopo[i][j].nome) == 0){
-				listaEscopo[i].insert(listaEscopo[i].begin()+i, x);
-				k += i;
+				listaEscopo[i].insert(listaEscopo[i].begin()+j, x);
+				k += j;
 				listaEscopo[i].erase(listaEscopo[i].begin() + k);
+				return;
 			}
 		}
 	
@@ -617,6 +694,7 @@ tabelaSimbolos inserirSimbolos(string nome, string tipo, string classe){
 	bool v;
 
 	v = verificarsimbolos(nome);
+	cout << "acesso a inserção" << endl;
 	//cout << v << endl;
 	if(v == true){
 		checarlista();
@@ -631,12 +709,24 @@ tabelaSimbolos inserirSimbolos(string nome, string tipo, string classe){
 	cont = qtd_tabelas-1;
 	cout << var.nome << ' ' << var.tipo << ' ' << var.endereco <<endl;
 	cout << cont << endl;
-	listaSimb.push_back(var);
+	listaEscopo[cont].push_back(var);
 	cout << "inseriu: " << listaEscopo[cont].size() <<endl;
 	qtd_simb++;
 
 	return var;
 
+}
+escopo buscarbloco(int k){
+	int i, cont;
+
+	cont = listaEscopo.size()-1;
+	for(i= cont; i>=0; i--){
+		if(infobloco[i].tipo == 1 and k == 1){
+			return infobloco[i];
+		}
+
+	}
+	yyerror("Nenhum bloco de laço existente para essa operação");
 }
 int main(int argc, char* argv[])
 {
@@ -644,8 +734,8 @@ int main(int argc, char* argv[])
 	int i;
 	var_temp_qnt = 0;
 	qtd_simb = 0;
-	qtd_tabelas = 1;
-	listaEscopo.push_back(listaSimb);
+	qtd_tabelas = 0;
+	qtd_laco = 0;
 
 	yyparse();
 	return 0;

@@ -54,11 +54,29 @@ ALT ("++"|"--")
 
 "else"      {yylval.label = yytext; return TK_ELSE;}
 
+"{"         {yylval.label = yytext; return TK_START;}
+
+":"         {yylval.label = yytext; return TK_START;}   
+
 "do"        {yylval.label = yytext; return TK_DO;}
 
 "while"     {yylval.label = yytext; return TK_WHILE;}
 
 "for"       {yylval.label = yytext; return TK_FOR;}
+
+"break"     {yylval.label = yytext; return TK_BREAK;}
+
+"continue"  {yylval.label = yytext; return TK_NEXT;}
+
+"switch"  {yylval.label = yytext; return TK_SWITCH;}
+
+"case"  {yylval.label = yytext; return TK_CASE;}
+
+"default"  {yylval.label = yytext; return TK_DEFAULT;}
+
+"global"    {return TK_GLOBAL;}
+
+"local"     {return TK_LOCAL;}
 
 [(){}[\];,]	{ return *yytext; }
 
@@ -78,7 +96,7 @@ ALT ("++"|"--")
 
 {ALT}       {yylval.label = yytext; return TK_ALT;}
 
-{VARI}		{ yylval.label = yytext; return TK_ID; }
+{VARI}		{yylval.label = yytext; return TK_ID; }
 
 .			{ *yytext; }
 

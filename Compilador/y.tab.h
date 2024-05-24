@@ -64,26 +64,34 @@ extern int yydebug;
     TK_ID = 265,                   /* TK_ID  */
     TK_TIPO_INT = 266,             /* TK_TIPO_INT  */
     TK_TIPO_FLOAT = 267,           /* TK_TIPO_FLOAT  */
-    TK_TIPO_CHAR = 268,            /* TK_TIPO_CHAR  */
-    TK_TIPO_BOOL = 269,            /* TK_TIPO_BOOL  */
-    TK_CONV = 270,                 /* TK_CONV  */
-    TK_MAIOR_IGUAL = 271,          /* TK_MAIOR_IGUAL  */
-    TK_MENOR_IGUAL = 272,          /* TK_MENOR_IGUAL  */
-    TK_MAIOR = 273,                /* TK_MAIOR  */
-    TK_MENOR = 274,                /* TK_MENOR  */
-    TK_IGUALDADE = 275,            /* TK_IGUALDADE  */
-    TK_DESIGUALDADE = 276,         /* TK_DESIGUALDADE  */
-    TK_CONJUNCAO = 277,            /* TK_CONJUNCAO  */
-    TK_DISNJUNCAO = 278,           /* TK_DISNJUNCAO  */
-    TK_ALT = 279,                  /* TK_ALT  */
-    TK_IF = 280,                   /* TK_IF  */
-    TK_ELSE = 281,                 /* TK_ELSE  */
-    TK_DO = 282,                   /* TK_DO  */
-    TK_WHILE = 283,                /* TK_WHILE  */
-    TK_FOR = 284,                  /* TK_FOR  */
-    TK_SWITCH = 285,               /* TK_SWITCH  */
-    TK_FIM = 286,                  /* TK_FIM  */
-    TK_ERROR = 287                 /* TK_ERROR  */
+    TK_ST = 268,                   /* TK_ST  */
+    TK_GLOBAL = 269,               /* TK_GLOBAL  */
+    TK_LOCAL = 270,                /* TK_LOCAL  */
+    TK_TIPO_CHAR = 271,            /* TK_TIPO_CHAR  */
+    TK_TIPO_BOOL = 272,            /* TK_TIPO_BOOL  */
+    TK_CONV = 273,                 /* TK_CONV  */
+    TK_MAIOR_IGUAL = 274,          /* TK_MAIOR_IGUAL  */
+    TK_MENOR_IGUAL = 275,          /* TK_MENOR_IGUAL  */
+    TK_MAIOR = 276,                /* TK_MAIOR  */
+    TK_MENOR = 277,                /* TK_MENOR  */
+    TK_IGUALDADE = 278,            /* TK_IGUALDADE  */
+    TK_DESIGUALDADE = 279,         /* TK_DESIGUALDADE  */
+    TK_CONJUNCAO = 280,            /* TK_CONJUNCAO  */
+    TK_DISNJUNCAO = 281,           /* TK_DISNJUNCAO  */
+    TK_ALT = 282,                  /* TK_ALT  */
+    TK_START = 283,                /* TK_START  */
+    TK_IF = 284,                   /* TK_IF  */
+    TK_ELSE = 285,                 /* TK_ELSE  */
+    TK_DO = 286,                   /* TK_DO  */
+    TK_WHILE = 287,                /* TK_WHILE  */
+    TK_FOR = 288,                  /* TK_FOR  */
+    TK_SWITCH = 289,               /* TK_SWITCH  */
+    TK_CASE = 290,                 /* TK_CASE  */
+    TK_DEFAULT = 291,              /* TK_DEFAULT  */
+    TK_BREAK = 292,                /* TK_BREAK  */
+    TK_NEXT = 293,                 /* TK_NEXT  */
+    TK_FIM = 294,                  /* TK_FIM  */
+    TK_ERROR = 295                 /* TK_ERROR  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -102,26 +110,34 @@ extern int yydebug;
 #define TK_ID 265
 #define TK_TIPO_INT 266
 #define TK_TIPO_FLOAT 267
-#define TK_TIPO_CHAR 268
-#define TK_TIPO_BOOL 269
-#define TK_CONV 270
-#define TK_MAIOR_IGUAL 271
-#define TK_MENOR_IGUAL 272
-#define TK_MAIOR 273
-#define TK_MENOR 274
-#define TK_IGUALDADE 275
-#define TK_DESIGUALDADE 276
-#define TK_CONJUNCAO 277
-#define TK_DISNJUNCAO 278
-#define TK_ALT 279
-#define TK_IF 280
-#define TK_ELSE 281
-#define TK_DO 282
-#define TK_WHILE 283
-#define TK_FOR 284
-#define TK_SWITCH 285
-#define TK_FIM 286
-#define TK_ERROR 287
+#define TK_ST 268
+#define TK_GLOBAL 269
+#define TK_LOCAL 270
+#define TK_TIPO_CHAR 271
+#define TK_TIPO_BOOL 272
+#define TK_CONV 273
+#define TK_MAIOR_IGUAL 274
+#define TK_MENOR_IGUAL 275
+#define TK_MAIOR 276
+#define TK_MENOR 277
+#define TK_IGUALDADE 278
+#define TK_DESIGUALDADE 279
+#define TK_CONJUNCAO 280
+#define TK_DISNJUNCAO 281
+#define TK_ALT 282
+#define TK_START 283
+#define TK_IF 284
+#define TK_ELSE 285
+#define TK_DO 286
+#define TK_WHILE 287
+#define TK_FOR 288
+#define TK_SWITCH 289
+#define TK_CASE 290
+#define TK_DEFAULT 291
+#define TK_BREAK 292
+#define TK_NEXT 293
+#define TK_FIM 294
+#define TK_ERROR 295
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

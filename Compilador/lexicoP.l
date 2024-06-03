@@ -11,7 +11,7 @@ DELIM {ESPACO}+
 NUM {DIGITO}+
 REAL {NUM}+("."{NUM}+)?
 CHAR \'({LETRA}|{NUM})\'
-STRING \"({LETRA}({LETRA}|{DELIM})*)\"
+STRING \"(({LETRA}|{NUM}|{REAL}|{ESPACO}|[(){}[\];,]|[+\-*/=$%#@!&''*<>,.;|^~´`?]|[éÉçÇãÃáÁÀàÊêõÕôÔÓóÒòÚú])+)?\"
 VARI {LETRA}({LETRA}|{NUM})*
 ALT ("++"|"--")
 %%

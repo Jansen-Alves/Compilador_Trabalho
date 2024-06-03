@@ -1791,7 +1791,7 @@ yyreduce:
 			 	escopo laco;
 
 				laco = buscarbloco(1);
-				fim = "\tFIM" + laco.label + ";\n";
+				fim = "\tFIM " + laco.label + ";\n";
 				yyval.traducao = yyvsp[-3].traducao + yyvsp[-1].traducao + fim;
 
 				listaEscopo.pop_back();

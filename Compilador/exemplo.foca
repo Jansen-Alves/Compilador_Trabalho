@@ -1,15 +1,6 @@
-int global y;
-y=3;
-switch(y){
-    case 1:
-        y= 3+2;
-        break;
-    case 3:
-        y = 2+y;
-        break;
-    default:
-        int global x; 
-        x=3;
-}
+string nome;
 
-x = 2;
+nome = "alcione almeida";
+sobrenome = "da silva";
+
+result = nome + sobrenome;

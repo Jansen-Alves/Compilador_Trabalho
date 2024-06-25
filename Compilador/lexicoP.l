@@ -24,6 +24,8 @@ ALT ("++"|"--")
 
 "int"		{return TK_TIPO_INT;}
 
+"string"    {return TK_TIPO_STRING;}
+
 "float"     {return TK_TIPO_FLOAT;}
 
 "char"      {return TK_TIPO_CHAR;}
@@ -70,9 +72,13 @@ ALT ("++"|"--")
 
 "switch"  {yylval.label = yytext; return TK_SWITCH;}
 
-"case"  {yylval.label = yytext; return TK_CASE;}
+"case"     {yylval.label = yytext; return TK_CASE;}
 
 "default"  {yylval.label = yytext; return TK_DEFAULT;}
+
+"scan"      {yylval.label = yytext; return TK_SCANNER;}
+
+"print"     {yylval.label = yytext; return TK_PRINT;}
 
 "global"    {return TK_GLOBAL;}
 

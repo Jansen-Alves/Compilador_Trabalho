@@ -1,0 +1,13 @@
+int i;
+i = 0;
+while(i <5){
+    y = 0;
+    while(y <10){
+        y = y+i;
+        if(y == 0){
+        break;
+        }
+
+    }
+    i++;
+}

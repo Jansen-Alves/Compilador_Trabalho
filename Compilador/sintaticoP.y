@@ -253,7 +253,16 @@ COMANDO 	: E ';'
 				inserirSimbolos($3.label, "float", "Number", $2.label, $4.label, $4.val);
 				flag = buscarSimbolos($3.label);
 				l1 = gentempcode("float");
-				$$.traducao = $4.traducao + "\t" + l1 + " = (float*) malloc(" + $4.label+ ");\n" +"\t" +flag.endereco+ "[0] = " +l1+";\n";
+				$$.traducao = $4.traducao + "\t" + l1 + " = (float*) malloc(" + $4.val+"*" +$4.label+ ");\n" +"\t" +flag.endereco+ "[0] = " +l1+";\n";
+			}
+			| TK_TIPO_STRING MODO LISTA_ID REF_ARRAY ';'
+			{
+				tabelaSimbolos flag;
+				string l1;
+				inserirSimbolos($3.label, "string", "String", $2.label, $4.label, $4.val);
+				flag = buscarSimbolos($3.label);
+				l1 = gentempcode("char");
+				$$.traducao = $4.traducao + "\t" + l1 + " = (char*) malloc(" + $4.val+ "*" +$4.label+ ");\n" +"\t" +flag.endereco+ "[0] = " +l1+";\n";
 			}
 			|TK_SCANNER'('TK_ID')'';'{
 				tabelaSimbolos flag;
@@ -287,10 +296,10 @@ COMANDO 	: E ';'
 				  +"\t"+e1+" = "+varChar+";\n\t"+e2+" = '\\0';\n"+
 				  "\t"+rel+" = "+e1+" != "+e2+";\n"+
 				  "\t"+relneg+" = !"+rel+";\n"+
-				  "\tIF("+relneg+") Goto Fim "+rel+";\n\t"+
+				  "\tIF("+relneg+") goto Fim "+rel+";\n\t"+
 				  temp+" = "+cout+";\n\t"+cout+" = "+temp+" + 1;\n\t"+
 				  varChar+" = "+flag.endereco+"["+cout+"];\n"
-				 +"\tGoto Inicio_"+rel+";\n\tFim "+rel+":\n";
+				 +"\tgoto Inicio_"+rel+";\n\tFim "+rel+":\n";
 				 flag.tam = cout;
 				 alterarSimbolos(flag);
 				}	
@@ -356,7 +365,7 @@ CONTROLES	: TK_IF E BLOCO
 				}
 				tst.label = gentempcode("bool");
 				tst.traducao = "\t"+tst.label + " = " +"!"+ $2.label+";\n";
-				jp = $2.traducao + tst.traducao+"\tif("+ tst.label+") go to IF-"+tst.label+";\n";
+				jp = $2.traducao + tst.traducao+"\tif("+ tst.label+") goto IF-"+tst.label+";\n";
 
 				$$.traducao = jp + $3.traducao +"\tIF-"+ tst.label + ";\n";
 
@@ -372,10 +381,10 @@ CONTROLES	: TK_IF E BLOCO
 				}
 				tst.label = gentempcode("bool");
 				tst.traducao = "\t"+tst.label + " = " +"!"+ $2.label+";\n";
-				jp = $2.traducao + tst.traducao+"\tif("+ tst.label+") go to IF-"+tst.label+";\n";
+				jp = $2.traducao + tst.traducao+"\tif("+ tst.label+") goto IF-"+tst.label+";\n";
 				
 				tfin.label = gentempcode("bool");
-				tfin.traducao = "\tgo to Else-" + tfin.label +";\n";
+				tfin.traducao = "\tgoto Else-" + tfin.label +";\n";
 				
 				$$.traducao = jp + $3.traducao + tfin.traducao +"\tIF-"+ tst.label +";\n" +  $5.traducao +"\tElse-" + tfin.label +";\n";
 
@@ -393,8 +402,8 @@ CONTROLES	: TK_IF E BLOCO
 				tst.traducao = "\t"+tst.label + " = " +"!"+ $2.label+";\n";
 
 				iniwhile = "\tinicio_"+laco.label+";\n" ;
-				jp =  iniwhile +$2.traducao + tst.traducao+"\tif("+ tst.label+") go to FIM "+laco.label+";\n";
-				ciclowhile = "\tgo to inicio_"+laco.label +";\n";
+				jp =  iniwhile +$2.traducao + tst.traducao+"\tif("+ tst.label+") goto FIM "+laco.label+";\n";
+				ciclowhile = "\tgoto inicio_"+laco.label +";\n";
 				$$.traducao = jp + $4.traducao + ciclowhile + "\tFIM "+laco.label+";\n";
 				$$.traducao += imprimirFree();
 				listaEscopo.pop_back();
@@ -415,8 +424,8 @@ CONTROLES	: TK_IF E BLOCO
 				iniwhile = "\tinicio_"+laco.label +";\n";
 
 				tst.traducao = "\t"+tst.label + " = " +"!"+ $6.label+";\n";
-				jp = iniwhile +$3.traducao + imprimirFree()+ $6.traducao + tst.traducao+"\tif("+ tst.label+") go to FIM "+laco.label+";\n";
-				ciclowhile = "\tgo to inicio_"+tst.label +";\n";
+				jp = iniwhile +$3.traducao + imprimirFree()+ $6.traducao + tst.traducao+"\tif("+ tst.label+") goto FIM "+laco.label+";\n";
+				ciclowhile = "\tgoto inicio_"+tst.label +";\n";
 				$$.traducao = jp + ciclowhile + "\tFIM "+laco.label+";\n";
 
 				listaEscopo.pop_back();
@@ -438,8 +447,8 @@ CONTROLES	: TK_IF E BLOCO
 				
 
 				tst.traducao = "\t"+tst.label + " = " +"!"+ $5.label+";\n";
-				cicloF = "\tgo to inicio_"+laco.label +";\n";
-				jp = $3.traducao + cicloI+ $5.traducao + tst.traducao+"\tif("+ tst.label+") go to FIM "+laco.label+";\n";
+				cicloF = "\tgoto inicio_"+laco.label +";\n";
+				jp = $3.traducao + cicloI+ $5.traducao + tst.traducao+"\tif("+ tst.label+") goto FIM "+laco.label+";\n";
 
 				$$.traducao = jp + $10.traducao + imprimirFree()+ $7.traducao + cicloF +"\tFIM "+ laco.label + ";\n";
 				listaEscopo.pop_back();
@@ -496,7 +505,7 @@ CASE		: TK_CASE E INIT COMANDOS
 				
 				tst.traducao = "\t"+tst.label + " = " +"!"+ comp.label+";\n";
 
-				jp = $2.traducao + comp.traducao + tst.traducao+"\tif("+ tst.label+") go to IF-"+tst.label+";\n";
+				jp = $2.traducao + comp.traducao + tst.traducao+"\tif("+ tst.label+") goto IF-"+tst.label+";\n";
 				
 				$$.traducao = jp + $4.traducao +"\tIF-"+ tst.label +";\n";
 				listaEscopo.pop_back();
@@ -1363,7 +1372,8 @@ ATB			: TK_ID '=' E
 					yyerror("variavel não declarada");
 				}else if($2.tipo.compare("int") != 0){
 					yyerror("Expressão incompativel para localizar elemento no array");
-			
+				}else if(flag.classe.compare($3.classe) == 0  && flag.classe.compare("String") == 0 && flag.tipo.compare("string") == 0){
+					TS = true;
 				}else if(flag.tipo.compare($4.tipo) != 0){
 					//checarlista();
 					cout << flag.tipo << " " <<  $3.tipo << endl;
@@ -1387,6 +1397,30 @@ ATB			: TK_ID '=' E
 						$$.traducao = $1.traducao + $2.traducao + $4.traducao + "\t" + l1 + " = " + $2. val + " * "+ flag.tam +";\n\t" + l2 + " = " + l1 + " + "+ $2.label +";\n\t" + $$.label + "["+ l2 +"] = " + $4.label + ";\n";
 					}
 				
+				}else if($4.classe.compare("String") == 0){
+					string ref;
+					$1.tipo = flag.tipo;
+					$1.label = flag.endereco;
+					atributos resultado = funcString($1, "=", $4);
+					cout<< resultado.traducao << endl;
+					if($1.tipo.compare("string") == 0 && $4.tipo.compare("char") == 0){						
+						$3=resultado;
+						cout<< flag.nome <<$3.tipo << endl;
+					}
+
+					if($1.tipo.compare($4.tipo) == 0){
+						cout << "entrou segundo if " <<$3.label << endl;
+						atributos a = buscaEnd($4.label);
+						cout << "busca por tam " <<a.tam << endl;
+						if(flag.tam.compare("0") != 0){
+							ref = $2.traducao + "\t" + l1 + " = " + $2. val + " * "+ flag.tam +";\n\t" + l2 + " = " + l1 + " + "+ $2.label +";\n";
+							$$.traducao= resultado.traducao+ ref + "\tfree("+$1.label+"["+ l2 +"]);\n";
+							$$.traducao=$$.traducao+"\t"+$1.label+"["+l2+"] = (char*) malloc("+a.tam+");\n\tstrcpy("
+						+$1.label+"["+ l2 +"],"+$4.label+");\n"+
+						"\tfree("+$4.label+");\n";
+						}
+						//$$.traducao = $1.traducao + $3.traducao + "\t"+ "strcpy(" + $$.label + ","+ $3.label + ");\n";
+					}
 				}
 				
 			};
@@ -1449,14 +1483,14 @@ C_LOOP		: TK_BREAK
 				escopo alvo;
 				alvo = buscarbloco(1);
 
-				$$.traducao = "\tgo to FIM " + alvo.label + ";\n";
+				$$.traducao = "\tgoto FIM " + alvo.label + ";\n";
 			}
 			| TK_NEXT
 			{
 				escopo alvo;
 				alvo = buscarbloco(1);
 
-				$$.traducao = "\tgo to inicio-" + alvo.label + ";\n";
+				$$.traducao = "\tgoto inicio_" + alvo.label + ";\n";
 			};
 
 %%

@@ -1,6 +1,0 @@
-string nome;
-
-nome = "alcione almeida";
-sobrenome = "da silva";
-
-result = nome + sobrenome;

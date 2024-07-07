@@ -19,7 +19,7 @@ debug:	PARSER_PARAMS += -Wcounterexamples
 debug: 	all
 
 translate: glf
-		./glf < exemplo.foca
+		./glf < exemplo.lazuli
 
 clean:
 	rm y.tab.c

@@ -3,7 +3,6 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include <muParser.h>
 #define bool int
 #define TRUE 1
 #define FALSE 0
@@ -144,12 +143,12 @@ COD         : TK_TIPO_INT TK_MAIN '(' ')' BLOCO
 				$$.traducao = $1.traducao + imprimirFree();
 				listaEscopo.pop_back();
 				infobloco.pop_back();
-				cout << " tamanho final de escopo, vazio " << listaEscopo.size() << endl;
+				//cout << " tamanho final de escopo, vazio " << listaEscopo.size() << endl;
 			}
 
 BLOCO		: INIT COMANDOS '}'
 			{
-				cout << listaEscopo.size();
+				//cout << listaEscopo.size();
 				/*std::vector<tabelaSimbolos>v1;
 				listaEscopo.push_back(v1);
 				qtd_tabelas++;
@@ -157,13 +156,13 @@ BLOCO		: INIT COMANDOS '}'
 				$$.traducao = $2.traducao + imprimirFree();
 				listaEscopo.pop_back();
 				infobloco.pop_back();
-				cout << " tamanho final de escopo " << listaEscopo.size() << endl;
+				//cout << " tamanho final de escopo " << listaEscopo.size() << endl;
 			}
 			;
 
 INIT		: TK_START
 			{
-				cout << "cheguei" << endl;
+				//cout << "cheguei" << endl;
 				vector<tabelaSimbolos> v1;
 				escopo x; 
 				x.label = "";
@@ -171,7 +170,7 @@ INIT		: TK_START
 				
 				listaEscopo.push_back(v1);
 				infobloco.push_back(x);
-				cout << " tamanho inicio de escopo " << listaEscopo.size() << endl;
+				//cout << " tamanho inicio de escopo " << listaEscopo.size() << endl;
 			}
 			;
 
@@ -184,7 +183,7 @@ INIB		: TK_START
 
 				listaEscopo.push_back(v1);
 				infobloco.push_back(x);
-				cout<< "bloco laço, tamanho pilha "<< listaEscopo.size() << endl;
+				//cout<< "bloco laço, tamanho pilha "<< listaEscopo.size() << endl;
 			}
 			;
 
@@ -408,7 +407,7 @@ CONTROLES	: TK_IF E BLOCO
 				$$.traducao += imprimirFree();
 				listaEscopo.pop_back();
 				infobloco.pop_back();
-				cout << " tamanho final de escopo, while" << listaEscopo.size() << endl;
+				//cout << " tamanho final de escopo, while" << listaEscopo.size() << endl;
 				
 			} 
 			|TK_DO INIB COMANDOS '}' TK_WHILE E ';'
@@ -430,7 +429,7 @@ CONTROLES	: TK_IF E BLOCO
 
 				listaEscopo.pop_back();
 				infobloco.pop_back();
-				cout << " tamanho final de escopo, Do while" << listaEscopo.size() << endl;
+				//cout << " tamanho final de escopo, Do while" << listaEscopo.size() << endl;
 			}
 			|TK_FOR '(' ATB ';' E ';' E')' INIB COMANDOS '}'
 			{
@@ -453,7 +452,7 @@ CONTROLES	: TK_IF E BLOCO
 				$$.traducao = jp + $10.traducao + imprimirFree()+ $7.traducao + cicloF +"\tFIM "+ laco.label + ";\n";
 				listaEscopo.pop_back();
 				infobloco.pop_back();
-				cout << " tamanho final de escopo, for" << listaEscopo.size() << endl;
+				//cout << " tamanho final de escopo, for" << listaEscopo.size() << endl;
 
 			}
 			| TK_SWITCH REF INIB CASES '}'
@@ -536,8 +535,8 @@ E 			: E '+' E
 					string label4=gentempcode("int");
 					string label5=gentempcode("int");
 
-					cout << "traducao de $2" << $2.traducao << endl;
-					cout << "traducao de soma" << resultado.traducao << endl;
+				//	cout << "traducao de $2" << $2.traducao << endl;
+					//cout << "traducao de soma" << resultado.traducao << endl;
 
 					if(temp1.tipo.compare("char") == 0 && temp2.tipo.compare("char") == 0){
 						string vetor2= gentempcode("string");
@@ -1187,7 +1186,7 @@ E 			: E '+' E
 					yyerror("Tipo incompativeis para essa operação");
 				}
 				$$.label = $1.label;
-				cout << "incremento da var"<< $$.label <<endl;
+				//cout << "incremento da var"<< $$.label <<endl;
 				$$.tipo = $1.tipo;
 				$$.classe = $1.classe;
 
@@ -1303,7 +1302,7 @@ ATB			: TK_ID '=' E
 				bool TS;
 				flag = buscarSimbolos($1.label);
 				
-				cout << "atribuindo" << endl;
+				//cout << "atribuindo" << endl;
 				if(flag.endereco.compare("") == 0){
 					cout << "não existia" << endl;
 					flag = inserirSimbolos($1.label, $3.tipo, $3.classe, "global", "0", "0");
@@ -1312,7 +1311,7 @@ ATB			: TK_ID '=' E
 				}
 				else if(flag.tipo.compare($3.tipo) != 0){
 					//checarlista();
-					cout << flag.tipo << " " <<  $3.tipo << endl;
+					//cout << flag.tipo << " " <<  $3.tipo << endl;
 					yyerror("Atribuição incorreta, tipo de variavel incompativel");
 					
 				}
@@ -1321,7 +1320,7 @@ ATB			: TK_ID '=' E
 				$$.val = $3.val;
 				flag.val = $$.val;
 				alterarSimbolos(flag);
-				cout << flag.nome <<" yo "<< flag.tipo << endl;
+				//cout << flag.nome <<" yo "<< flag.tipo << endl;
 
 
 				if(flag.tipo.compare("string") !=0){
@@ -1335,13 +1334,13 @@ ATB			: TK_ID '=' E
 					//cout<< resultado.traducao << endl;
 					if($1.tipo.compare("string") == 0 && $3.tipo.compare("char") == 0){						
 						$3=resultado;
-						cout<< flag.nome <<$3.tipo << endl;
+						//cout<< flag.nome <<$3.tipo << endl;
 					}
 
 					if($1.tipo.compare($3.tipo) == 0){
-						cout << "entrou segundo if " <<$3.label << endl;
+						//cout << "entrou segundo if " <<$3.label << endl;
 						atributos a = buscaEnd($3.label);
-						cout << "busca por tam " <<a.tam << endl;
+						//cout << "busca por tam " <<a.tam << endl;
 						if(flag.tam.compare("0") != 0){
 							$$.traducao= resultado.traducao+"\tfree("+$1.label+");\n";
 							$$.traducao=$$.traducao+"\t"+$1.label+" = (char*) malloc("+a.tam+");\n\tstrcpy("
@@ -1367,7 +1366,7 @@ ATB			: TK_ID '=' E
 				bool TS;
 				flag = buscarSimbolos($1.label);
 				
-				cout << "atribuindo" << endl;
+				//cout << "atribuindo" << endl;
 				if(flag.endereco.compare("") == 0){
 					yyerror("variavel não declarada");
 				}else if($2.tipo.compare("int") != 0){
@@ -1376,7 +1375,7 @@ ATB			: TK_ID '=' E
 					TS = true;
 				}else if(flag.tipo.compare($4.tipo) != 0){
 					//checarlista();
-					cout << flag.tipo << " " <<  $3.tipo << endl;
+					//cout << flag.tipo << " " <<  $3.tipo << endl;
 					yyerror("Atribuição incorreta, tipo de variavel incompativel");
 					
 				}
@@ -1385,7 +1384,7 @@ ATB			: TK_ID '=' E
 				$$.val = $2.val;
 				flag.val = $$.val;
 				alterarSimbolos(flag);
-				cout << flag.nome <<" yo "<< flag.tipo << endl;
+				//cout << flag.nome <<" yo "<< flag.tipo << endl;
 				l1 = gentempcode("int");
 				l2 = gentempcode("int");
 
@@ -1402,16 +1401,16 @@ ATB			: TK_ID '=' E
 					$1.tipo = flag.tipo;
 					$1.label = flag.endereco;
 					atributos resultado = funcString($1, "=", $4);
-					cout<< resultado.traducao << endl;
+				//	cout<< resultado.traducao << endl;
 					if($1.tipo.compare("string") == 0 && $4.tipo.compare("char") == 0){						
 						$3=resultado;
 						cout<< flag.nome <<$3.tipo << endl;
 					}
 
 					if($1.tipo.compare($4.tipo) == 0){
-						cout << "entrou segundo if " <<$3.label << endl;
+						//cout << "entrou segundo if " <<$3.label << endl;
 						atributos a = buscaEnd($4.label);
-						cout << "busca por tam " <<a.tam << endl;
+						//cout << "busca por tam " <<a.tam << endl;
 						if(flag.tam.compare("0") != 0){
 							ref = $2.traducao + "\t" + l1 + " = " + $2. val + " * "+ flag.tam +";\n\t" + l2 + " = " + l1 + " + "+ $2.label +";\n";
 							$$.traducao= resultado.traducao+ ref + "\tfree("+$1.label+"["+ l2 +"]);\n";
@@ -1429,8 +1428,8 @@ ID_F		: TK_ID
 			{
 				tabelaSimbolos flag;
 				flag = buscarSimbolos($1.label);
-				cout << $1.label <<endl;
-				cout <<"variavel encontrada. " << flag.endereco << endl;
+				//cout << $1.label <<endl;
+				//cout <<"variavel encontrada. " << flag.endereco << endl;
 				if(flag.endereco.compare("") == 0){
 					yyerror("Variavel não declarada");
 				}
@@ -1453,7 +1452,7 @@ ID_F		: TK_ID
 				tabelaSimbolos flag;
 				string l1, l2;
 				flag = buscarSimbolos($1.label);
-				cout << $1.label <<endl;
+				//cout << $1.label <<endl;
 				//cout <<"variavel encontrada. " << flag.endereco << endl;
 				if(flag.endereco.compare("") == 0){
 					yyerror("Variavel não declarada");
@@ -1537,7 +1536,7 @@ void checarlista(){
 	for(i = cont; i >=0; i--){
 		for(j=0; j<listaEscopo[i].size(); j++){
 		x = listaEscopo[i][j];
-		cout << "\t nome: " << x.nome << " "<< "val: "<< x.val << " " <<" tipo: " << x.tipo << '-' << x.endereco << endl;
+		//cout << "\t nome: " << x.nome << " "<< "val: "<< x.val << " " <<" tipo: " << x.tipo << '-' << x.endereco << endl;
 		}
 	}
 }
@@ -1548,15 +1547,15 @@ tabelaSimbolos buscarSimbolos(string nome){
 	x.endereco = "";
 	int i, j,cont;
 
-	cout << "busca por "<< nome <<endl;
+	//cout << "busca por "<< nome <<endl;
 	cont = listaEscopo.size()-1;
 	for(i = cont; i >=0; i--){
 		for(j=0; j<listaEscopo[i].size(); j++){
 			//cout << j << " simbolo " << listaEscopo[i][j].nome<< endl;
 			if(nome.compare(listaEscopo[i][j].nome) == 0  && (i == cont || listaEscopo[i][j].mod == 1)){
-				printf("Achei ");
+				//printf("Achei ");
 				x = listaEscopo[i][j];
-				cout<< x.endereco<< endl;	
+				//cout<< x.endereco<< endl;	
 				
 				return x;
 			}
@@ -1572,7 +1571,7 @@ void modatrib(string nome, string tam){
 	j = 0;
 	k = 0;
 
-	cout << " mudanca de atributo " << nome <<  endl;
+	//cout << " mudanca de atributo " << nome <<  endl;
 	for(i=0; i<listaattr.size(); i++){
 		
 		if(nome.compare(listaattr[i].label) == 0){
@@ -1599,9 +1598,9 @@ atributos buscaEnd(string nome){
 	for(i=0; i<listaattr.size(); i++){
 		//cout << i << " simbolo " << listaattr[i].label<< endl;
 		if(nome.compare(listaattr[i].label) == 0){
-			printf("Achei ");
+			//printf("Achei ");
 			x = listaattr[i];
-			cout<< listaattr[i].tam<< endl;	
+			//cout<< listaattr[i].tam<< endl;	
 				
 			return x;
 		}
@@ -1613,10 +1612,10 @@ atributos buscaEnd(string nome){
 void alterarSimbolos(tabelaSimbolos x){
 	int i, j, k, cont;
 	cont = listaEscopo.size()-1;
-	cout << "alterando variavel" <<endl;
+	//cout << "alterando variavel" <<endl;
 	for(i = cont; i >=0; i--){
 		for(j = 0; j<listaEscopo[i].size(); j++){
-			cout << j << " simbolos " << listaEscopo[i][j].nome<< endl;
+			//cout << j << " simbolos " << listaEscopo[i][j].nome<< endl;
 			if(x.nome.compare(listaEscopo[i][j].nome) == 0  && (i == cont || listaEscopo[i][j].mod == 1) ){
 				listaEscopo[i].insert(listaEscopo[i].begin()+j, x);
 				k = j +1;
@@ -1662,11 +1661,11 @@ tabelaSimbolos inserirSimbolos(string nome, string tipo, string classe, string a
 	}else{
 		var.mod = 0;
 	}
-	cout << acesso << endl;
+	//cout << acesso << endl;
 	var.endereco = gentempcode(tipo);
 	
 	cont = listaEscopo.size()-1;
-	cout <<"var "<< var.nome << ' ' << var.tipo << ' ' << var.endereco <<endl;
+	//cout <<"var "<< var.nome << ' ' << var.tipo << ' ' << var.endereco <<endl;
 	listaEscopo[cont].push_back(var);
 	//cout << "inseriu: " << listaEscopo[cont].size() <<endl;
 
@@ -1676,9 +1675,9 @@ tabelaSimbolos inserirSimbolos(string nome, string tipo, string classe, string a
 atributos funcString(atributos e1, string operador, atributos e2){
 	atributos result;
 	
-	cout<< e1.tipo << e2.tipo << endl;
+//cout<< e1.tipo << e2.tipo << endl;
 	if(e1.tipo.compare(e2.tipo) == 0 && e1.tipo.compare("string") == 0 && operador.compare("=") == 0){
-		cout<< "primeira alternativa" << endl;
+		//cout<< "primeira alternativa" << endl;
 		result.tipo=e1.tipo;
 		result.label="";	
 		result.traducao=e1.traducao+e2.traducao;
@@ -1689,7 +1688,7 @@ atributos funcString(atributos e1, string operador, atributos e2){
 		result.label = gentempcode("string");
 		string labelx = gentempcode("string");
 
-		cout<< "segunda alternativa" << result.tipo<< endl;
+		//cout<< "segunda alternativa" << result.tipo<< endl;
 
 		if(e1.tipo.compare("char") == 0){
 			result.traducao=e1.traducao + e2.traducao+"\t"+labelx+" =  2;\n\t"+result.label+" = (char*)malloc("+labelx+");\n\t"+result.label+"[0] = "+e1.label+";\n";
@@ -1697,13 +1696,13 @@ atributos funcString(atributos e1, string operador, atributos e2){
 			result.traducao= e1.traducao + e2.traducao+"\t"+labelx+" =  2;\n\t"+result.label+" = (char*)malloc("+labelx+");\n\t"+result.label+"[0] = "+e2.label+";\n";
 		}
 		modatrib(result.label, labelx);
-		cout <<"label" << result.label  << endl;
+		//cout <<"label" << result.label  << endl;
 		return result;
 	}else if((operador=="+"&& e1.tipo.compare(e2.tipo) == 0 && e1.tipo.compare("string") == 0)){
 		result.tipo=e1.tipo;
 		result.label=e2.label;	
 		result.traducao=e1.traducao+e2.traducao;
-		cout<< "ultima alternativa" << endl;
+		//cout<< "ultima alternativa" << endl;
 		return result;
 	}
 	
@@ -1727,7 +1726,7 @@ string imprimirFree(){
 	for(i = cont; i >=0; i--){
 		for(j=0; j<listaEscopo[i].size(); j++){
 			//cout << j << " simbolo " << listaEscopo[i][j].nome<< endl;
-			if(listaEscopo[i][j].tipo.compare("string") == 0){
+			if(listaEscopo[i][j].tipo.compare("string") == 0 || listaEscopo[i][j].tam.compare("0") != 0 ){
 				declaracao += "\tfree("+listaEscopo[i][j].endereco+");\n";
 			}
 			}

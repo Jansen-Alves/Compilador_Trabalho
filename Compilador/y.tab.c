@@ -73,7 +73,6 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include <muParser.h>
 #define bool int
 #define TRUE 1
 #define FALSE 0
@@ -139,6 +138,7 @@ void tipagem();
 void limparpilha();
 
 bool traducao(string op);
+atributos operacao(atributos E1, atributos E2, string op);
 
 #line 144 "y.tab.c"
 
@@ -760,10 +760,10 @@ static const yytype_int16 yyrline[] =
      192,   197,   202,   206,   210,   214,   218,   222,   226,   230,
      249,   258,   267,   308,   316,   320,   324,   328,   333,   336,
      348,   359,   374,   392,   414,   435,   459,   474,   481,   486,
-     490,   515,   523,   639,   689,   739,   789,   840,   891,   903,
-     909,   948,   986,  1024,  1062,  1097,  1132,  1149,  1167,  1183,
-    1198,  1211,  1225,  1234,  1238,  1242,  1252,  1260,  1268,  1275,
-    1288,  1293,  1300,  1363,  1428,  1451,  1481,  1488
+     490,   515,   523,   526,   529,   532,   535,   538,   589,   597,
+     603,   642,   680,   718,   756,   791,   826,   843,   861,   877,
+     892,   905,   919,   928,   932,   936,   946,   954,   962,   969,
+     982,   987,   994,  1057,  1122,  1145,  1175,  1182
 };
 #endif
 
@@ -1570,7 +1570,7 @@ yyreduce:
 				yyval.traducao = yyvsp[0].traducao + imprimirFree();
 				listaEscopo.pop_back();
 				infobloco.pop_back();
-				cout << " tamanho final de escopo, vazio " << listaEscopo.size() << endl;
+				//cout << " tamanho final de escopo, vazio " << listaEscopo.size() << endl;
 			}
 #line 1576 "y.tab.c"
     break;
@@ -1578,7 +1578,7 @@ yyreduce:
   case 7: /* BLOCO: INIT COMANDOS '}'  */
 #line 151 "sintaticoP.y"
                         {
-				cout << listaEscopo.size();
+				//cout << listaEscopo.size();
 				/*std::vector<tabelaSimbolos>v1;
 				listaEscopo.push_back(v1);
 				qtd_tabelas++;
@@ -1586,7 +1586,7 @@ yyreduce:
 				yyval.traducao = yyvsp[-1].traducao + imprimirFree();
 				listaEscopo.pop_back();
 				infobloco.pop_back();
-				cout << " tamanho final de escopo " << listaEscopo.size() << endl;
+				//cout << " tamanho final de escopo " << listaEscopo.size() << endl;
 			}
 #line 1592 "y.tab.c"
     break;
@@ -1594,7 +1594,7 @@ yyreduce:
   case 8: /* INIT: TK_START  */
 #line 165 "sintaticoP.y"
                         {
-				cout << "cheguei" << endl;
+				//cout << "cheguei" << endl;
 				vector<tabelaSimbolos> v1;
 				escopo x; 
 				x.label = "";
@@ -1602,7 +1602,7 @@ yyreduce:
 				
 				listaEscopo.push_back(v1);
 				infobloco.push_back(x);
-				cout << " tamanho inicio de escopo " << listaEscopo.size() << endl;
+				//cout << " tamanho inicio de escopo " << listaEscopo.size() << endl;
 			}
 #line 1608 "y.tab.c"
     break;
@@ -1617,7 +1617,7 @@ yyreduce:
 
 				listaEscopo.push_back(v1);
 				infobloco.push_back(x);
-				cout<< "bloco laço, tamanho pilha "<< listaEscopo.size() << endl;
+				//cout<< "bloco laço, tamanho pilha "<< listaEscopo.size() << endl;
 			}
 #line 1623 "y.tab.c"
     break;
@@ -1777,10 +1777,10 @@ yyreduce:
 				  +"\t"+e1+" = "+varChar+";\n\t"+e2+" = '\\0';\n"+
 				  "\t"+rel+" = "+e1+" != "+e2+";\n"+
 				  "\t"+relneg+" = !"+rel+";\n"+
-				  "\tIF("+relneg+") Goto Fim "+rel+";\n\t"+
+				  "\tIF("+relneg+") goto Fim "+rel+";\n\t"+
 				  temp+" = "+cout+";\n\t"+cout+" = "+temp+" + 1;\n\t"+
 				  varChar+" = "+flag.endereco+"["+cout+"];\n"
-				 +"\tGoto Inicio_"+rel+";\n\tFim "+rel+":\n";
+				 +"\tgoto Inicio_"+rel+";\n\tFim "+rel+":\n";
 				 flag.tam = cout;
 				 alterarSimbolos(flag);
 				}	
@@ -1881,7 +1881,7 @@ yyreduce:
 				}
 				tst.label = gentempcode("bool");
 				tst.traducao = "\t"+tst.label + " = " +"!"+ yyvsp[-1].label+";\n";
-				jp = yyvsp[-1].traducao + tst.traducao+"\tif("+ tst.label+") go to IF-"+tst.label+";\n";
+				jp = yyvsp[-1].traducao + tst.traducao+"\tif("+ tst.label+") goto IF-"+tst.label+";\n";
 
 				yyval.traducao = jp + yyvsp[0].traducao +"\tIF-"+ tst.label + ";\n";
 
@@ -1901,10 +1901,10 @@ yyreduce:
 				}
 				tst.label = gentempcode("bool");
 				tst.traducao = "\t"+tst.label + " = " +"!"+ yyvsp[-3].label+";\n";
-				jp = yyvsp[-3].traducao + tst.traducao+"\tif("+ tst.label+") go to IF-"+tst.label+";\n";
+				jp = yyvsp[-3].traducao + tst.traducao+"\tif("+ tst.label+") goto IF-"+tst.label+";\n";
 				
 				tfin.label = gentempcode("bool");
-				tfin.traducao = "\tgo to Else-" + tfin.label +";\n";
+				tfin.traducao = "\tgoto Else-" + tfin.label +";\n";
 				
 				yyval.traducao = jp + yyvsp[-2].traducao + tfin.traducao +"\tIF-"+ tst.label +";\n" +  yyvsp[0].traducao +"\tElse-" + tfin.label +";\n";
 
@@ -1926,13 +1926,13 @@ yyreduce:
 				tst.traducao = "\t"+tst.label + " = " +"!"+ yyvsp[-3].label+";\n";
 
 				iniwhile = "\tinicio_"+laco.label+";\n" ;
-				jp =  iniwhile +yyvsp[-3].traducao + tst.traducao+"\tif("+ tst.label+") go to FIM "+laco.label+";\n";
-				ciclowhile = "\tgo to inicio_"+laco.label +";\n";
+				jp =  iniwhile +yyvsp[-3].traducao + tst.traducao+"\tif("+ tst.label+") goto FIM "+laco.label+";\n";
+				ciclowhile = "\tgoto inicio_"+laco.label +";\n";
 				yyval.traducao = jp + yyvsp[-1].traducao + ciclowhile + "\tFIM "+laco.label+";\n";
 				yyval.traducao += imprimirFree();
 				listaEscopo.pop_back();
 				infobloco.pop_back();
-				cout << " tamanho final de escopo, while" << listaEscopo.size() << endl;
+				//cout << " tamanho final de escopo, while" << listaEscopo.size() << endl;
 				
 			}
 #line 1939 "y.tab.c"
@@ -1952,13 +1952,13 @@ yyreduce:
 				iniwhile = "\tinicio_"+laco.label +";\n";
 
 				tst.traducao = "\t"+tst.label + " = " +"!"+ yyvsp[-1].label+";\n";
-				jp = iniwhile +yyvsp[-4].traducao + imprimirFree()+ yyvsp[-1].traducao + tst.traducao+"\tif("+ tst.label+") go to FIM "+laco.label+";\n";
-				ciclowhile = "\tgo to inicio_"+tst.label +";\n";
+				jp = iniwhile +yyvsp[-4].traducao + imprimirFree()+ yyvsp[-1].traducao + tst.traducao+"\tif("+ tst.label+") goto FIM "+laco.label+";\n";
+				ciclowhile = "\tgoto inicio_"+tst.label +";\n";
 				yyval.traducao = jp + ciclowhile + "\tFIM "+laco.label+";\n";
 
 				listaEscopo.pop_back();
 				infobloco.pop_back();
-				cout << " tamanho final de escopo, Do while" << listaEscopo.size() << endl;
+				//cout << " tamanho final de escopo, Do while" << listaEscopo.size() << endl;
 			}
 #line 1964 "y.tab.c"
     break;
@@ -1979,13 +1979,13 @@ yyreduce:
 				
 
 				tst.traducao = "\t"+tst.label + " = " +"!"+ yyvsp[-6].label+";\n";
-				cicloF = "\tgo to inicio_"+laco.label +";\n";
-				jp = yyvsp[-8].traducao + cicloI+ yyvsp[-6].traducao + tst.traducao+"\tif("+ tst.label+") go to FIM "+laco.label+";\n";
+				cicloF = "\tgoto inicio_"+laco.label +";\n";
+				jp = yyvsp[-8].traducao + cicloI+ yyvsp[-6].traducao + tst.traducao+"\tif("+ tst.label+") goto FIM "+laco.label+";\n";
 
 				yyval.traducao = jp + yyvsp[-1].traducao + imprimirFree()+ yyvsp[-4].traducao + cicloF +"\tFIM "+ laco.label + ";\n";
 				listaEscopo.pop_back();
 				infobloco.pop_back();
-				cout << " tamanho final de escopo, for" << listaEscopo.size() << endl;
+				//cout << " tamanho final de escopo, for" << listaEscopo.size() << endl;
 
 			}
 #line 1992 "y.tab.c"
@@ -2054,7 +2054,7 @@ yyreduce:
 				
 				tst.traducao = "\t"+tst.label + " = " +"!"+ comp.label+";\n";
 
-				jp = yyvsp[-2].traducao + comp.traducao + tst.traducao+"\tif("+ tst.label+") go to IF-"+tst.label+";\n";
+				jp = yyvsp[-2].traducao + comp.traducao + tst.traducao+"\tif("+ tst.label+") goto IF-"+tst.label+";\n";
 				
 				yyval.traducao = jp + yyvsp[0].traducao +"\tIF-"+ tst.label +";\n";
 				listaEscopo.pop_back();
@@ -2076,344 +2076,47 @@ yyreduce:
     break;
 
   case 42: /* E: E '+' E  */
-#line 524 "sintaticoP.y"
-                        {
-				int r1;
-				int result;
-				float r2;
-
-				if((yyvsp[-2].tipo.compare("string") == 0||yyvsp[-2].tipo.compare("char") == 0 )&&(yyvsp[0].tipo.compare("string") == 0||yyvsp[0].tipo.compare("char") == 0)){
-					atributos resultado = funcString(yyvsp[-2], "+", yyvsp[0]);
-					yyval.label = gentempcode(resultado.tipo);
-					yyval.tipo = resultado.tipo;
-					atributos temp1=buscaEnd(yyvsp[-2].label);
-					atributos temp2=buscaEnd(yyvsp[0].label);
-					atributos temp3=buscaEnd(resultado.label);
-					string label4=gentempcode("int");
-					string label5=gentempcode("int");
-
-					cout << "traducao de $2" << yyvsp[-1].traducao << endl;
-					cout << "traducao de soma" << resultado.traducao << endl;
-
-					if(temp1.tipo.compare("char") == 0 && temp2.tipo.compare("char") == 0){
-						string vetor2= gentempcode("string");
-						string labelx2=gentempcode("int");
-
-						yyval.traducao=resultado.traducao+"\t"+labelx2+" =  2;\n\t"+vetor2+"= (char*)malloc("+labelx2+");\n\t"+vetor2+"[0] = "+yyvsp[-2].label+";\n";
-
-						yyval.traducao += "\t"+label4+" = "+labelx2+"- 1;\n\t"+
-						label5+"="+temp3.tam+"+"+label4+";\n";
-						modatrib(yyval.label, label5);
-						yyval.traducao += "\t"+yyval.label+" = (char*) malloc("+label5+");\n"+
-					"\t"+yyval.label+" = strcat("+resultado.label+","+vetor2+");\n"+"\tfree("+vetor2+");\n";
-					}
-					else if(temp1.tipo.compare("char")==0){
-						yyval.traducao = resultado.traducao+"\t"+label4+" = "+temp2.tam+"- 1;\n\t"+
-						label5+"="+temp3.tam+"+"+label4+";\n";
-						modatrib(yyval.label, label5);
-						yyval.traducao = yyval.traducao+ "\t"+yyval.label+" = (char*) malloc("+label5+");\n"+
-					"\t"+yyval.label+" = strcat("+resultado.label+","+yyvsp[0].label+");\n"+"\tfree("+yyvsp[0].label+");\n";
-					}else{
-						yyval.traducao = resultado.traducao+"\t"+label4+" = "+temp3.tam+"- 1;\n\t"+
-						label5+"="+temp1.tam+"+"+label4+";\n";
-						modatrib(yyval.label, label5);
-
-						yyval.traducao += "\t"+yyval.label+" = (char*) malloc("+label5+");\n"+
-						"\t"+yyval.label+" = strcat("+yyvsp[-2].label+","+resultado.label+");\n"+"\tfree("+resultado.label+");\n";
-					}
-					// $$.traducao = elemento.traducao+
-					// "\t"+label4+"="+temp2.tam+"- 1;\n\t"+
-					// label5+"="+temp1.tam+"+"+temp2.tam+";\n";
-
-					// insereTabela($$.label,$$.tipo,true,"",label5);
-					// $$.traducao = $$.traducao+ "\t"+$$.label+"= (char*) malloc("+label5+");\n"
-					// +"\t"+$$.label+" = strcat("+$1.label+","+$3.label+") ;\n"+"\tfree("+$3.label+");\n"; 
-				}
-				else if(yyvsp[-2].tipo.compare(yyvsp[0].tipo) != 0 ){
-					atributos conv;
-					int x;
-					if(yyvsp[-2].tipo.compare("int") == 0 && yyvsp[0].tipo.compare("float") == 0){
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[-2].label + ";\n"; 
-						yyvsp[-2].tipo = "float";
-						x = 0;
-
-					}else if(yyvsp[-2].tipo.compare("float") == 0 && yyvsp[0].tipo.compare("int") == 0){
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[0].label + ";\n"; 
-						yyvsp[0].tipo = "float";
-						x = 1;
-
-					}else if(yyvsp[-2].tipo.compare("int") == 0 && yyvsp[0].tipo.compare("char") == 0){
-						conv.label = gentempcode("int");
-						conv.traducao = "\t" + conv.label + " = " + "(int) " + yyvsp[0].label + ";\n"; 
-						yyvsp[0].tipo = "int";
-						x = 1;
-
-					}else if(yyvsp[-2].tipo.compare("char") == 0 && yyvsp[0].tipo.compare("int") == 0){
-						conv.label = gentempcode("int");
-						conv.traducao = "\t" + conv.label + "=" + "(int) " + yyvsp[-2].label + ";\n"; 
-						yyvsp[-2].tipo = "int";
-						x = 0;
-						
-					}else{
-						yyerror("Tipos incompativeis para essa operação");
-					}
-					yyval.label = gentempcode(yyvsp[-2].tipo);
-					yyval.tipo = yyvsp[-2].tipo;
-					yyval.classe = yyvsp[-2].classe;
-					
-					
-					if(x == 0){
-					yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + conv.traducao +"\t" + yyval.label + 
-							" = " + conv.label + " + " + yyvsp[0].label + ";\n";
-					}else{
-						yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + conv.traducao +"\t" + yyval.label + 
-							" = " + yyvsp[-2].label + " + " + conv.label + ";\n";
-					}
-
-				}
-				else{
-					if(yyvsp[-2].tipo.compare("bool")==0){
-						yyerror("Tipos incompativeis para essa operação");
-					}
-					yyval.label = gentempcode(yyvsp[-2].tipo);
-					yyval.tipo = yyvsp[-2].tipo;
-					yyval.classe = yyvsp[-2].classe;
-				
-				
-					yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + yyval.label + 
-						" = " + yyvsp[-2].label + " + " + yyvsp[0].label + ";\n";
-				}
-				yyval.val = yyvsp[-2].val + "+" + yyvsp[0].val;
-				
-				/*parser.SetExpr($$.val);
-				result = parser.Eval();
-				cout << "conta" << $$.val << " = "<< result << endl;*/
-				
-			}
-#line 2196 "y.tab.c"
+#line 523 "sintaticoP.y"
+              {
+          yyval = operacao(yyvsp[-2], yyvsp[0], "+");
+      }
+#line 2084 "y.tab.c"
     break;
 
   case 43: /* E: E '-' E  */
-#line 640 "sintaticoP.y"
-                        {
-				int r1;
-				float r2;
-				if(yyvsp[-2].tipo.compare(yyvsp[0].tipo) != 0 ){
-					atributos conv;
-					int x;
-					if(yyvsp[-2].tipo.compare("int") == 0 && yyvsp[0].tipo.compare("float") == 0){
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[-2].label + ";\n"; 
-						yyvsp[-2].tipo = "float";
-						x = 0;
-
-					}else if(yyvsp[-2].tipo.compare("float") == 0 && yyvsp[0].tipo.compare("int") == 0){
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[0].label + ";\n"; 
-						yyvsp[0].tipo = "float";
-						x = 1;
-
-					}else{
-						yyerror("Tipos incompativeis para essa operação");
-					}
-					yyval.label = gentempcode(yyvsp[-2].tipo);
-					yyval.tipo = yyvsp[-2].tipo;
-					yyval.classe = yyvsp[-2].classe;
-					
-					
-					if(x == 0){
-					yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + conv.traducao +"\t" + yyval.label + 
-							" = " + conv.label + " - " + yyvsp[0].label + ";\n";
-					}else{
-						yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + conv.traducao +"\t" + yyval.label + 
-							" = " + yyvsp[-2].label + " - " + conv.label + ";\n";
-					}
-
-				}
-				else{
-					if(yyvsp[-2].tipo.compare("bool")==0 || yyvsp[-2].tipo.compare("char") == 0){
-						yyerror("Tipos incompativeis para essa operação");
-					}
-					yyval.label = gentempcode(yyvsp[-2].tipo);
-					yyval.tipo = yyvsp[-2].tipo;
-					yyval.classe = yyvsp[-2].classe;
-				
-				
-					yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + yyval.label + 
-						" = " + yyvsp[-2].label + " - " + yyvsp[0].label + ";\n";
-				}
-				
-			}
-#line 2250 "y.tab.c"
+#line 526 "sintaticoP.y"
+              {
+          yyval = operacao(yyvsp[-2], yyvsp[0], "-");
+      }
+#line 2092 "y.tab.c"
     break;
 
   case 44: /* E: E '*' E  */
-#line 690 "sintaticoP.y"
-                        {
-				int r1;
-				float r2;
-				if(yyvsp[-2].tipo.compare(yyvsp[0].tipo) != 0 ){
-					atributos conv;
-					int x;
-					if(yyvsp[-2].tipo.compare("int") == 0 && yyvsp[0].tipo.compare("float") == 0){
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[-2].label + ";\n"; 
-						yyvsp[-2].tipo = "float";
-						x = 0;
-
-					}else if(yyvsp[-2].tipo.compare("float") == 0 && yyvsp[0].tipo.compare("int") == 0){
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[0].label + ";\n"; 
-						yyvsp[0].tipo = "float";
-						x = 1;
-
-					}else{
-						yyerror("Tipos incompativeis para essa operação");
-					}
-					yyval.label = gentempcode(yyvsp[-2].tipo);
-					yyval.tipo = yyvsp[-2].tipo;
-					yyval.classe = yyvsp[-2].classe;
-					
-					
-					if(x == 0){
-					yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + conv.traducao +"\t" + yyval.label + 
-							" = " + conv.label + " * " + yyvsp[0].label + ";\n";
-					}else{
-						yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + conv.traducao +"\t" + yyval.label + 
-							" = " + yyvsp[-2].label + " * " + conv.label + ";\n";
-					}
-
-				}
-				else{
-					if(yyvsp[-2].tipo.compare("bool")==0 || yyvsp[-2].tipo.compare("char") == 0){
-						yyerror("Tipos incompativeis para essa operação");
-					}
-					yyval.label = gentempcode(yyvsp[-2].tipo);
-					yyval.tipo = yyvsp[-2].tipo;
-					yyval.classe = yyvsp[-2].classe;
-				
-				
-					yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + yyval.label + 
-						" = " + yyvsp[-2].label + " * " + yyvsp[0].label + ";\n";
-				}
-				
-			}
-#line 2304 "y.tab.c"
+#line 529 "sintaticoP.y"
+              {
+          yyval = operacao(yyvsp[-2], yyvsp[0], "*");
+      }
+#line 2100 "y.tab.c"
     break;
 
   case 45: /* E: E '/' E  */
-#line 740 "sintaticoP.y"
-                        {
-				int r1;
-				float r2;
-				if(yyvsp[-2].tipo.compare(yyvsp[0].tipo) != 0 ){
-					atributos conv;
-					int x;
-					if(yyvsp[-2].tipo.compare("int") == 0 && yyvsp[0].tipo.compare("float") == 0){
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[-2].label + ";\n"; 
-						yyvsp[-2].tipo = "float";
-						x = 0;
-
-					}else if(yyvsp[-2].tipo.compare("float") == 0 && yyvsp[0].tipo.compare("int") == 0){
-						conv.label = gentempcode("float");
-						conv.traducao = "\t" + conv.label + " = " + "(float) " + yyvsp[0].label + ";\n"; 
-						yyvsp[0].tipo = "float";
-						x = 1;
-
-					}else{
-						yyerror("Tipos incompativeis para essa operação");
-					}
-					yyval.label = gentempcode(yyvsp[-2].tipo);
-					yyval.tipo = yyvsp[-2].tipo;
-					yyval.classe = yyvsp[-2].classe;
-					
-					
-					if(x == 0){
-					yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + conv.traducao +"\t" + yyval.label + 
-							" = " + conv.label + " / " + yyvsp[0].label + ";\n";
-					}else{
-						yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + conv.traducao +"\t" + yyval.label + 
-							" = " + yyvsp[-2].label + " / " + conv.label + ";\n";
-					}
-
-				}
-				else{
-					if(yyvsp[-2].tipo.compare("bool")==0 || yyvsp[-2].tipo.compare("char") == 0){
-						yyerror("Tipos incompativeis para essa operação");
-					}
-					yyval.label = gentempcode(yyvsp[-2].tipo);
-					yyval.tipo = yyvsp[-2].tipo;
-					yyval.classe = yyvsp[-2].classe;
-				
-				
-					yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + yyval.label + 
-						" = " + yyvsp[-2].label + " / " + yyvsp[0].label + ";\n";
-				}
-				
-			}
-#line 2358 "y.tab.c"
+#line 532 "sintaticoP.y"
+              {
+          yyval = operacao(yyvsp[-2], yyvsp[0], "/");
+      }
+#line 2108 "y.tab.c"
     break;
 
   case 46: /* E: E '%' E  */
-#line 790 "sintaticoP.y"
-                        {
-				int r1;
-				float r2;
-				if(yyvsp[-2].tipo.compare(yyvsp[0].tipo) != 0 ){
-					atributos conv;
-					int x;
-					if(yyvsp[-2].tipo.compare("int") == 0 && yyvsp[0].tipo.compare("float") == 0){
-						conv.label = gentempcode("int");
-						conv.traducao = "\t" + conv.label + " = " + "(int) " + yyvsp[-2].label + ";\n"; 
-						yyvsp[-2].tipo = "float";
-						x = 0;
-
-					}else if(yyvsp[-2].tipo.compare("float") == 0 && yyvsp[0].tipo.compare("int") == 0){
-						conv.label = gentempcode("int");
-						conv.traducao = "\t" + conv.label + " = " + "(int) " + yyvsp[0].label + ";\n"; 
-						yyvsp[0].tipo = "float";
-						x = 1;
-
-					}else{
-						yyerror("Tipos incompativeis para essa operação");
-					}
-					yyval.label = gentempcode(yyvsp[-2].tipo);
-					yyval.tipo = yyvsp[-2].tipo;
-					yyval.classe = yyvsp[-2].classe;
-					
-					
-					if(x == 0){
-					yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + conv.traducao +"\t" + yyval.label + 
-							" = " + conv.label + " % " + yyvsp[0].label + ";\n";
-					}else{
-						yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + conv.traducao +"\t" + yyval.label + 
-							" = " + yyvsp[-2].label + " % " + conv.label + ";\n";
-					}
-
-				}
-				else{
-					if(yyvsp[-2].tipo.compare("bool")==0 || yyvsp[-2].tipo.compare("char") == 0 || yyvsp[-2].tipo.compare("float") == 0){
-						yyerror("Tipos incompativeis para essa operação");
-					}
-					
-					yyval.label = gentempcode(yyvsp[-2].tipo);
-					yyval.tipo = yyvsp[-2].tipo;
-					yyval.classe = yyvsp[-2].classe;
-				
-				
-					yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + yyval.label + 
-						" = " + yyvsp[-2].label + " % " + yyvsp[0].label + ";\n";
-				}
-				
-			}
-#line 2413 "y.tab.c"
+#line 535 "sintaticoP.y"
+              {
+          yyval = operacao(yyvsp[-2], yyvsp[0], "%");
+      }
+#line 2116 "y.tab.c"
     break;
 
   case 47: /* E: E '^' E  */
-#line 841 "sintaticoP.y"
+#line 539 "sintaticoP.y"
                         {
 				int r1;
 				float r2;
@@ -2464,37 +2167,34 @@ yyreduce:
 				}
 				
 			}
-#line 2468 "y.tab.c"
+#line 2171 "y.tab.c"
     break;
 
   case 48: /* E: '-' E  */
-#line 892 "sintaticoP.y"
-                        {
-				if(yyvsp[0].tipo.compare("int") == 0 or yyvsp[0].tipo.compare("float") == 0){
-					yyval.label = gentempcode(yyvsp[0].tipo);
-					yyval.tipo = yyvsp[0].tipo;
-					yyval.traducao = yyvsp[0].traducao + "\t" + yyval.label + 
-							" = " + "-" + yyvsp[0].label + ";\n";
-
-				}else{
-					yyerror("Tipo da expressão é incompativel para essa operação");
-				}
-			}
-#line 2484 "y.tab.c"
+#line 589 "sintaticoP.y"
+          {
+        if (yyvsp[0].tipo == "int" || yyvsp[0].tipo == "float") {
+            yyval.tipo = yyvsp[0].tipo;
+            yyval.traducao = "\t" + gentempcode(yyvsp[0].tipo) + " = -" + yyvsp[0].label + ";\n";
+        } else {
+            yyerror("Tipo da expressão é incompatível para essa operação");
+        }
+    }
+#line 2184 "y.tab.c"
     break;
 
   case 49: /* E: '(' E ')'  */
-#line 904 "sintaticoP.y"
+#line 598 "sintaticoP.y"
                         {
 				yyval.label = yyvsp[-1].label;
 				yyval.tipo = yyvsp[-1].tipo;
 				yyval.traducao = yyvsp[-1].traducao + "\t" + yyval.label + " = " + yyvsp[-1].label +";\n";
 			}
-#line 2494 "y.tab.c"
+#line 2194 "y.tab.c"
     break;
 
   case 50: /* E: E TK_MAIOR_IGUAL E  */
-#line 910 "sintaticoP.y"
+#line 604 "sintaticoP.y"
                         {
 				bool x;
 				atributos conv; 
@@ -2533,11 +2233,11 @@ yyreduce:
 				}
 				
 			}
-#line 2537 "y.tab.c"
+#line 2237 "y.tab.c"
     break;
 
   case 51: /* E: E TK_MENOR_IGUAL E  */
-#line 949 "sintaticoP.y"
+#line 643 "sintaticoP.y"
                         {
 				bool x;
 				atributos conv; 
@@ -2575,11 +2275,11 @@ yyreduce:
 						" = " + yyvsp[-2].label + " <= " + yyvsp[0].label + ";\n";
 				}
 			}
-#line 2579 "y.tab.c"
+#line 2279 "y.tab.c"
     break;
 
   case 52: /* E: E TK_MAIOR E  */
-#line 987 "sintaticoP.y"
+#line 681 "sintaticoP.y"
                         {
 				bool x;
 				atributos conv; 
@@ -2617,11 +2317,11 @@ yyreduce:
 						" = " + yyvsp[-2].label + " > " + yyvsp[0].label + ";\n";
 				}
 			}
-#line 2621 "y.tab.c"
+#line 2321 "y.tab.c"
     break;
 
   case 53: /* E: E TK_MENOR E  */
-#line 1025 "sintaticoP.y"
+#line 719 "sintaticoP.y"
                         {
 				bool x;
 				atributos conv; 
@@ -2659,11 +2359,11 @@ yyreduce:
 						" = " + yyvsp[-2].label + " < " + yyvsp[0].label + ";\n";
 				}
 			}
-#line 2663 "y.tab.c"
+#line 2363 "y.tab.c"
     break;
 
   case 54: /* E: E TK_IGUALDADE E  */
-#line 1063 "sintaticoP.y"
+#line 757 "sintaticoP.y"
                         {
 				bool x;
 				atributos conv; 
@@ -2698,11 +2398,11 @@ yyreduce:
 						" = " + yyvsp[-2].label + " == " + yyvsp[0].label + ";\n";
 				}
 			}
-#line 2702 "y.tab.c"
+#line 2402 "y.tab.c"
     break;
 
   case 55: /* E: E TK_DESIGUALDADE E  */
-#line 1098 "sintaticoP.y"
+#line 792 "sintaticoP.y"
                         {
 				bool x;
 				atributos conv; 
@@ -2737,11 +2437,11 @@ yyreduce:
 						" = " + yyvsp[-2].label + " != " + yyvsp[0].label + ";\n";
 				}
 			}
-#line 2741 "y.tab.c"
+#line 2441 "y.tab.c"
     break;
 
   case 56: /* E: E TK_CONJUNCAO E  */
-#line 1133 "sintaticoP.y"
+#line 827 "sintaticoP.y"
                         {
 				bool x;
 				if(yyvsp[-2].tipo.compare("bool") == 0 && yyvsp[0].tipo.compare("bool") == 0){
@@ -2758,11 +2458,11 @@ yyreduce:
 				yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + yyval.label + 
 						" = " + yyvsp[-2].label + " && " + yyvsp[0].label + ";\n";
 			}
-#line 2762 "y.tab.c"
+#line 2462 "y.tab.c"
     break;
 
   case 57: /* E: E TK_DISNJUNCAO E  */
-#line 1150 "sintaticoP.y"
+#line 844 "sintaticoP.y"
                         {
 				bool x;
 				if(yyvsp[-2].tipo.compare("bool") == 0 && yyvsp[0].tipo.compare("bool") == 0){
@@ -2780,11 +2480,11 @@ yyreduce:
 				yyval.traducao = yyvsp[-2].traducao + yyvsp[0].traducao + "\t" + yyval.label + 
 						" = " + yyvsp[-2].label + " || " + yyvsp[0].label + ";\n";
 			}
-#line 2784 "y.tab.c"
+#line 2484 "y.tab.c"
     break;
 
   case 58: /* E: '!' E  */
-#line 1168 "sintaticoP.y"
+#line 862 "sintaticoP.y"
                         {
 				bool x;
 				if(yyvsp[0].tipo.compare("bool") == 0){
@@ -2800,18 +2500,18 @@ yyreduce:
 				yyval.traducao = yyvsp[0].traducao + "\t" + yyval.label + 
 						" = " +"!"+ yyvsp[0].label + ";\n";
 			}
-#line 2804 "y.tab.c"
+#line 2504 "y.tab.c"
     break;
 
   case 59: /* E: E TK_ALT  */
-#line 1184 "sintaticoP.y"
+#line 878 "sintaticoP.y"
                         {
 				string x;
 				if(yyvsp[-1].classe.compare("Number") != 0){
 					yyerror("Tipo incompativeis para essa operação");
 				}
 				yyval.label = yyvsp[-1].label;
-				cout << "incremento da var"<< yyval.label <<endl;
+				//cout << "incremento da var"<< $$.label <<endl;
 				yyval.tipo = yyvsp[-1].tipo;
 				yyval.classe = yyvsp[-1].classe;
 
@@ -2819,11 +2519,11 @@ yyreduce:
 				yyval.traducao = yyvsp[-1].traducao + "\t" + yyval.label + " = " + yyvsp[-1].label + " "+ yyvsp[0].label[0] + " "+ x +";\n";
 				
 			}
-#line 2823 "y.tab.c"
+#line 2523 "y.tab.c"
     break;
 
   case 60: /* E: '(' TK_TIPO_INT ')' E  */
-#line 1199 "sintaticoP.y"
+#line 893 "sintaticoP.y"
                         {
 				int conv;
 				if(yyvsp[0].tipo.compare("int") == 0 || yyvsp[0].tipo.compare("float") == 0){
@@ -2836,11 +2536,11 @@ yyreduce:
 					yyerror("Tipo de expressão incompativel para a conversão");
 				}
 			}
-#line 2840 "y.tab.c"
+#line 2540 "y.tab.c"
     break;
 
   case 61: /* E: '(' TK_TIPO_FLOAT ')' E  */
-#line 1212 "sintaticoP.y"
+#line 906 "sintaticoP.y"
                         {
 				float conv;
 				if(yyvsp[0].tipo.compare("int") == 0 || yyvsp[0].tipo.compare("float") == 0){
@@ -2854,11 +2554,11 @@ yyreduce:
 				}
 
 			}
-#line 2858 "y.tab.c"
+#line 2558 "y.tab.c"
     break;
 
   case 62: /* E: '(' TK_TIPO_BOOL ')' E  */
-#line 1226 "sintaticoP.y"
+#line 920 "sintaticoP.y"
                         {
 				if(yyvsp[0].tipo.compare("bool") != 0){
 				yyerror("Tipo de expressão incompativel para a conversão");
@@ -2867,27 +2567,27 @@ yyreduce:
 				yyval.tipo = yyvsp[0].tipo;
 				yyval.traducao =  yyvsp[0].traducao +"\t" + yyval.label + " = " + "(bool) " + yyvsp[0].label+";\n"; 
 			}
-#line 2871 "y.tab.c"
+#line 2571 "y.tab.c"
     break;
 
   case 63: /* E: ATB  */
-#line 1235 "sintaticoP.y"
+#line 929 "sintaticoP.y"
                         {
 				yyval.traducao = yyvsp[0].traducao;
 			}
-#line 2879 "y.tab.c"
+#line 2579 "y.tab.c"
     break;
 
   case 64: /* E: C_LOOP  */
-#line 1239 "sintaticoP.y"
+#line 933 "sintaticoP.y"
                         {
 				yyval.traducao = yyvsp[0].traducao;
 			}
-#line 2887 "y.tab.c"
+#line 2587 "y.tab.c"
     break;
 
   case 65: /* E: TK_NUM  */
-#line 1243 "sintaticoP.y"
+#line 937 "sintaticoP.y"
                         {
 				yyval.label = gentempcode("int");
 				yyval.tipo = "int";
@@ -2897,11 +2597,11 @@ yyreduce:
 
 				//cout << "Variavel atribuida " << $$.val << endl;
 			}
-#line 2901 "y.tab.c"
+#line 2601 "y.tab.c"
     break;
 
   case 66: /* E: TK_REAL  */
-#line 1253 "sintaticoP.y"
+#line 947 "sintaticoP.y"
                         {
 				yyval.label = gentempcode("float");
 				yyval.tipo = "float";
@@ -2909,11 +2609,11 @@ yyreduce:
 				yyval.val = yyvsp[0].label;
 				yyval.traducao = "\t" + yyval.label + " = " + yyvsp[0].label + ";\n";
 			}
-#line 2913 "y.tab.c"
+#line 2613 "y.tab.c"
     break;
 
   case 67: /* E: TK_CHAR  */
-#line 1261 "sintaticoP.y"
+#line 955 "sintaticoP.y"
                         {
 				yyval.label = gentempcode("char");
 				yyval.tipo = "char";
@@ -2921,11 +2621,11 @@ yyreduce:
 				yyval.val = yyvsp[0].label;
 				yyval.traducao = "\t" + yyval.label + " = " + yyvsp[0].label + ";\n";
 			}
-#line 2925 "y.tab.c"
+#line 2625 "y.tab.c"
     break;
 
   case 68: /* E: TK_BOOL  */
-#line 1268 "sintaticoP.y"
+#line 962 "sintaticoP.y"
                                 {
 				yyval.label = gentempcode("bool");
 				yyval.tipo = "bool";
@@ -2933,11 +2633,11 @@ yyreduce:
 				yyval.val = yyvsp[0].label;
 				yyval.traducao = "\t" + yyval.label + " = " + yyvsp[0].label +";\n";
 			}
-#line 2937 "y.tab.c"
+#line 2637 "y.tab.c"
     break;
 
   case 69: /* E: TK_STRING  */
-#line 1276 "sintaticoP.y"
+#line 970 "sintaticoP.y"
                         {
 				string l1;
 				yyval.label = gentempcode("char*");
@@ -2950,36 +2650,36 @@ yyreduce:
 				yyval.traducao += "\t" + yyval.label + " = (char*) malloc(" + l1 +");\n"+"\tstrcpy("+yyval.label+","+yyvsp[0].label+");\n";
 			    
 			}
-#line 2954 "y.tab.c"
+#line 2654 "y.tab.c"
     break;
 
   case 70: /* E: ID_F  */
-#line 1289 "sintaticoP.y"
+#line 983 "sintaticoP.y"
                         {
 				yyval.traducao = yyvsp[0].traducao;
 
 			}
-#line 2963 "y.tab.c"
+#line 2663 "y.tab.c"
     break;
 
   case 71: /* E: TK_CONV  */
-#line 1294 "sintaticoP.y"
+#line 988 "sintaticoP.y"
                         {
 				yyval.label = gentempcode("char");
 				yyval.val = yyvsp[0].label;
 				//cout << $$.val << endl;
 			}
-#line 2973 "y.tab.c"
+#line 2673 "y.tab.c"
     break;
 
   case 72: /* ATB: TK_ID '=' E  */
-#line 1301 "sintaticoP.y"
+#line 995 "sintaticoP.y"
                         {
 				tabelaSimbolos flag;
 				bool TS;
 				flag = buscarSimbolos(yyvsp[-2].label);
 				
-				cout << "atribuindo" << endl;
+				//cout << "atribuindo" << endl;
 				if(flag.endereco.compare("") == 0){
 					cout << "não existia" << endl;
 					flag = inserirSimbolos(yyvsp[-2].label, yyvsp[0].tipo, yyvsp[0].classe, "global", "0", "0");
@@ -2988,7 +2688,7 @@ yyreduce:
 				}
 				else if(flag.tipo.compare(yyvsp[0].tipo) != 0){
 					//checarlista();
-					cout << flag.tipo << " " <<  yyvsp[0].tipo << endl;
+					//cout << flag.tipo << " " <<  $3.tipo << endl;
 					yyerror("Atribuição incorreta, tipo de variavel incompativel");
 					
 				}
@@ -2997,7 +2697,7 @@ yyreduce:
 				yyval.val = yyvsp[0].val;
 				flag.val = yyval.val;
 				alterarSimbolos(flag);
-				cout << flag.nome <<" yo "<< flag.tipo << endl;
+				//cout << flag.nome <<" yo "<< flag.tipo << endl;
 
 
 				if(flag.tipo.compare("string") !=0){
@@ -3011,13 +2711,13 @@ yyreduce:
 					//cout<< resultado.traducao << endl;
 					if(yyvsp[-2].tipo.compare("string") == 0 && yyvsp[0].tipo.compare("char") == 0){						
 						yyvsp[0]=resultado;
-						cout<< flag.nome <<yyvsp[0].tipo << endl;
+						//cout<< flag.nome <<$3.tipo << endl;
 					}
 
 					if(yyvsp[-2].tipo.compare(yyvsp[0].tipo) == 0){
-						cout << "entrou segundo if " <<yyvsp[0].label << endl;
+						//cout << "entrou segundo if " <<$3.label << endl;
 						atributos a = buscaEnd(yyvsp[0].label);
-						cout << "busca por tam " <<a.tam << endl;
+						//cout << "busca por tam " <<a.tam << endl;
 						if(flag.tam.compare("0") != 0){
 							yyval.traducao= resultado.traducao+"\tfree("+yyvsp[-2].label+");\n";
 							yyval.traducao=yyval.traducao+"\t"+yyvsp[-2].label+" = (char*) malloc("+a.tam+");\n\tstrcpy("
@@ -3036,18 +2736,18 @@ yyreduce:
 					}
 				}
 			}
-#line 3040 "y.tab.c"
+#line 2740 "y.tab.c"
     break;
 
   case 73: /* ATB: TK_ID REF_ARRAY '=' E  */
-#line 1364 "sintaticoP.y"
+#line 1058 "sintaticoP.y"
                         {
 				tabelaSimbolos flag;
 				string l1, l2;
 				bool TS;
 				flag = buscarSimbolos(yyvsp[-3].label);
 				
-				cout << "atribuindo" << endl;
+				//cout << "atribuindo" << endl;
 				if(flag.endereco.compare("") == 0){
 					yyerror("variavel não declarada");
 				}else if(yyvsp[-2].tipo.compare("int") != 0){
@@ -3056,7 +2756,7 @@ yyreduce:
 					TS = true;
 				}else if(flag.tipo.compare(yyvsp[0].tipo) != 0){
 					//checarlista();
-					cout << flag.tipo << " " <<  yyvsp[-1].tipo << endl;
+					//cout << flag.tipo << " " <<  $3.tipo << endl;
 					yyerror("Atribuição incorreta, tipo de variavel incompativel");
 					
 				}
@@ -3065,7 +2765,7 @@ yyreduce:
 				yyval.val = yyvsp[-2].val;
 				flag.val = yyval.val;
 				alterarSimbolos(flag);
-				cout << flag.nome <<" yo "<< flag.tipo << endl;
+				//cout << flag.nome <<" yo "<< flag.tipo << endl;
 				l1 = gentempcode("int");
 				l2 = gentempcode("int");
 
@@ -3082,16 +2782,16 @@ yyreduce:
 					yyvsp[-3].tipo = flag.tipo;
 					yyvsp[-3].label = flag.endereco;
 					atributos resultado = funcString(yyvsp[-3], "=", yyvsp[0]);
-					cout<< resultado.traducao << endl;
+				//	cout<< resultado.traducao << endl;
 					if(yyvsp[-3].tipo.compare("string") == 0 && yyvsp[0].tipo.compare("char") == 0){						
 						yyvsp[-1]=resultado;
 						cout<< flag.nome <<yyvsp[-1].tipo << endl;
 					}
 
 					if(yyvsp[-3].tipo.compare(yyvsp[0].tipo) == 0){
-						cout << "entrou segundo if " <<yyvsp[-1].label << endl;
+						//cout << "entrou segundo if " <<$3.label << endl;
 						atributos a = buscaEnd(yyvsp[0].label);
-						cout << "busca por tam " <<a.tam << endl;
+						//cout << "busca por tam " <<a.tam << endl;
 						if(flag.tam.compare("0") != 0){
 							ref = yyvsp[-2].traducao + "\t" + l1 + " = " + yyvsp[-2]. val + " * "+ flag.tam +";\n\t" + l2 + " = " + l1 + " + "+ yyvsp[-2].label +";\n";
 							yyval.traducao= resultado.traducao+ ref + "\tfree("+yyvsp[-3].label+"["+ l2 +"]);\n";
@@ -3104,16 +2804,16 @@ yyreduce:
 				}
 				
 			}
-#line 3108 "y.tab.c"
+#line 2808 "y.tab.c"
     break;
 
   case 74: /* ID_F: TK_ID  */
-#line 1429 "sintaticoP.y"
+#line 1123 "sintaticoP.y"
                         {
 				tabelaSimbolos flag;
 				flag = buscarSimbolos(yyvsp[0].label);
-				cout << yyvsp[0].label <<endl;
-				cout <<"variavel encontrada. " << flag.endereco << endl;
+				//cout << $1.label <<endl;
+				//cout <<"variavel encontrada. " << flag.endereco << endl;
 				if(flag.endereco.compare("") == 0){
 					yyerror("Variavel não declarada");
 				}
@@ -3131,16 +2831,16 @@ yyreduce:
 				//cout << "Variavel atribuida " << $$.val << endl;
 				}
 			}
-#line 3135 "y.tab.c"
+#line 2835 "y.tab.c"
     break;
 
   case 75: /* ID_F: TK_ID REF_ARRAY  */
-#line 1452 "sintaticoP.y"
+#line 1146 "sintaticoP.y"
                         {
 				tabelaSimbolos flag;
 				string l1, l2;
 				flag = buscarSimbolos(yyvsp[-1].label);
-				cout << yyvsp[-1].label <<endl;
+				//cout << $1.label <<endl;
 				//cout <<"variavel encontrada. " << flag.endereco << endl;
 				if(flag.endereco.compare("") == 0){
 					yyerror("Variavel não declarada");
@@ -3165,33 +2865,33 @@ yyreduce:
 				//cout << "Variavel atribuida " << $$.val << endl;
 				
 			}
-#line 3169 "y.tab.c"
+#line 2869 "y.tab.c"
     break;
 
   case 76: /* C_LOOP: TK_BREAK  */
-#line 1482 "sintaticoP.y"
+#line 1176 "sintaticoP.y"
                         {
 				escopo alvo;
 				alvo = buscarbloco(1);
 
-				yyval.traducao = "\tgo to FIM " + alvo.label + ";\n";
+				yyval.traducao = "\tgoto FIM " + alvo.label + ";\n";
 			}
-#line 3180 "y.tab.c"
+#line 2880 "y.tab.c"
     break;
 
   case 77: /* C_LOOP: TK_NEXT  */
-#line 1489 "sintaticoP.y"
+#line 1183 "sintaticoP.y"
                         {
 				escopo alvo;
 				alvo = buscarbloco(1);
 
-				yyval.traducao = "\tgo to inicio_" + alvo.label + ";\n";
+				yyval.traducao = "\tgoto inicio_" + alvo.label + ";\n";
 			}
-#line 3191 "y.tab.c"
+#line 2891 "y.tab.c"
     break;
 
 
-#line 3195 "y.tab.c"
+#line 2895 "y.tab.c"
 
       default: break;
     }
@@ -3384,7 +3084,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 1496 "sintaticoP.y"
+#line 1190 "sintaticoP.y"
 
 
 #include "lex.yy.c"
@@ -3421,6 +3121,43 @@ bool traducao(string op){
 	return resp;
 }
 
+atributos operacao(atributos E1, atributos E2, string op) {
+    atributos resultado;
+
+    if (E1.tipo.compare("string") == 0 || E1.tipo.compare("char") == 0 ||
+        E2.tipo.compare("string") == 0 || E2.tipo.compare("char") == 0) {
+        // Concatenação de strings ou caracteres
+        resultado = funcString(E1, op, E2); // Suponha que funcString realiza a operação adequada
+
+        // Gera código intermediário para concatenação
+        resultado.label = gentempcode(resultado.tipo);
+        resultado.traducao = resultado.traducao; // Atribui a tradução obtida de funcString
+    } else {
+        // Operações aritméticas (+, -, *, /)
+        resultado.label = gentempcode(E1.tipo); // Resultado terá o tipo de E1 ou E2
+        resultado.tipo = E1.tipo;
+
+        // Gera código intermediário para operação aritmética
+        if (op == "+") {
+            resultado.traducao = E1.traducao + E2.traducao + "\t" + resultado.label +
+                                 " = " + E1.label + " + " + E2.label + ";\n";
+        } else if (op == "-") {
+            resultado.traducao = E1.traducao + E2.traducao + "\t" + resultado.label +
+                                 " = " + E1.label + " - " + E2.label + ";\n";
+        } else if (op == "*") {
+            resultado.traducao = E1.traducao + E2.traducao + "\t" + resultado.label +
+                                 " = " + E1.label + " * " + E2.label + ";\n";
+        } else if (op == "/") {
+            resultado.traducao = E1.traducao + E2.traducao + "\t" + resultado.label +
+                                 " = " + E1.label + " / " + E2.label + ";\n";
+        } else {
+            cerr << "Operador não suportado!\n";
+        }
+    }
+
+    return resultado;
+}
+
 void checarlista(){
 	int i, j, cont;
 	tabelaSimbolos x; 
@@ -3429,7 +3166,7 @@ void checarlista(){
 	for(i = cont; i >=0; i--){
 		for(j=0; j<listaEscopo[i].size(); j++){
 		x = listaEscopo[i][j];
-		cout << "\t nome: " << x.nome << " "<< "val: "<< x.val << " " <<" tipo: " << x.tipo << '-' << x.endereco << endl;
+		//cout << "\t nome: " << x.nome << " "<< "val: "<< x.val << " " <<" tipo: " << x.tipo << '-' << x.endereco << endl;
 		}
 	}
 }
@@ -3440,15 +3177,15 @@ tabelaSimbolos buscarSimbolos(string nome){
 	x.endereco = "";
 	int i, j,cont;
 
-	cout << "busca por "<< nome <<endl;
+	//cout << "busca por "<< nome <<endl;
 	cont = listaEscopo.size()-1;
 	for(i = cont; i >=0; i--){
 		for(j=0; j<listaEscopo[i].size(); j++){
 			//cout << j << " simbolo " << listaEscopo[i][j].nome<< endl;
 			if(nome.compare(listaEscopo[i][j].nome) == 0  && (i == cont || listaEscopo[i][j].mod == 1)){
-				printf("Achei ");
+				//printf("Achei ");
 				x = listaEscopo[i][j];
-				cout<< x.endereco<< endl;	
+				//cout<< x.endereco<< endl;	
 				
 				return x;
 			}
@@ -3464,7 +3201,7 @@ void modatrib(string nome, string tam){
 	j = 0;
 	k = 0;
 
-	cout << " mudanca de atributo " << nome <<  endl;
+	//cout << " mudanca de atributo " << nome <<  endl;
 	for(i=0; i<listaattr.size(); i++){
 		
 		if(nome.compare(listaattr[i].label) == 0){
@@ -3491,9 +3228,9 @@ atributos buscaEnd(string nome){
 	for(i=0; i<listaattr.size(); i++){
 		//cout << i << " simbolo " << listaattr[i].label<< endl;
 		if(nome.compare(listaattr[i].label) == 0){
-			printf("Achei ");
+			//printf("Achei ");
 			x = listaattr[i];
-			cout<< listaattr[i].tam<< endl;	
+			//cout<< listaattr[i].tam<< endl;	
 				
 			return x;
 		}
@@ -3505,10 +3242,10 @@ atributos buscaEnd(string nome){
 void alterarSimbolos(tabelaSimbolos x){
 	int i, j, k, cont;
 	cont = listaEscopo.size()-1;
-	cout << "alterando variavel" <<endl;
+	//cout << "alterando variavel" <<endl;
 	for(i = cont; i >=0; i--){
 		for(j = 0; j<listaEscopo[i].size(); j++){
-			cout << j << " simbolos " << listaEscopo[i][j].nome<< endl;
+			//cout << j << " simbolos " << listaEscopo[i][j].nome<< endl;
 			if(x.nome.compare(listaEscopo[i][j].nome) == 0  && (i == cont || listaEscopo[i][j].mod == 1) ){
 				listaEscopo[i].insert(listaEscopo[i].begin()+j, x);
 				k = j +1;
@@ -3554,11 +3291,11 @@ tabelaSimbolos inserirSimbolos(string nome, string tipo, string classe, string a
 	}else{
 		var.mod = 0;
 	}
-	cout << acesso << endl;
+	//cout << acesso << endl;
 	var.endereco = gentempcode(tipo);
 	
 	cont = listaEscopo.size()-1;
-	cout <<"var "<< var.nome << ' ' << var.tipo << ' ' << var.endereco <<endl;
+	//cout <<"var "<< var.nome << ' ' << var.tipo << ' ' << var.endereco <<endl;
 	listaEscopo[cont].push_back(var);
 	//cout << "inseriu: " << listaEscopo[cont].size() <<endl;
 
@@ -3568,9 +3305,9 @@ tabelaSimbolos inserirSimbolos(string nome, string tipo, string classe, string a
 atributos funcString(atributos e1, string operador, atributos e2){
 	atributos result;
 	
-	cout<< e1.tipo << e2.tipo << endl;
+//cout<< e1.tipo << e2.tipo << endl;
 	if(e1.tipo.compare(e2.tipo) == 0 && e1.tipo.compare("string") == 0 && operador.compare("=") == 0){
-		cout<< "primeira alternativa" << endl;
+		//cout<< "primeira alternativa" << endl;
 		result.tipo=e1.tipo;
 		result.label="";	
 		result.traducao=e1.traducao+e2.traducao;
@@ -3581,7 +3318,7 @@ atributos funcString(atributos e1, string operador, atributos e2){
 		result.label = gentempcode("string");
 		string labelx = gentempcode("string");
 
-		cout<< "segunda alternativa" << result.tipo<< endl;
+		//cout<< "segunda alternativa" << result.tipo<< endl;
 
 		if(e1.tipo.compare("char") == 0){
 			result.traducao=e1.traducao + e2.traducao+"\t"+labelx+" =  2;\n\t"+result.label+" = (char*)malloc("+labelx+");\n\t"+result.label+"[0] = "+e1.label+";\n";
@@ -3589,13 +3326,13 @@ atributos funcString(atributos e1, string operador, atributos e2){
 			result.traducao= e1.traducao + e2.traducao+"\t"+labelx+" =  2;\n\t"+result.label+" = (char*)malloc("+labelx+");\n\t"+result.label+"[0] = "+e2.label+";\n";
 		}
 		modatrib(result.label, labelx);
-		cout <<"label" << result.label  << endl;
+		//cout <<"label" << result.label  << endl;
 		return result;
 	}else if((operador=="+"&& e1.tipo.compare(e2.tipo) == 0 && e1.tipo.compare("string") == 0)){
 		result.tipo=e1.tipo;
 		result.label=e2.label;	
 		result.traducao=e1.traducao+e2.traducao;
-		cout<< "ultima alternativa" << endl;
+		//cout<< "ultima alternativa" << endl;
 		return result;
 	}
 	
@@ -3619,7 +3356,7 @@ string imprimirFree(){
 	for(i = cont; i >=0; i--){
 		for(j=0; j<listaEscopo[i].size(); j++){
 			//cout << j << " simbolo " << listaEscopo[i][j].nome<< endl;
-			if(listaEscopo[i][j].tipo.compare("string") == 0){
+			if(listaEscopo[i][j].tipo.compare("string") == 0 || listaEscopo[i][j].tam.compare("0") != 0 ){
 				declaracao += "\tfree("+listaEscopo[i][j].endereco+");\n";
 			}
 			}
